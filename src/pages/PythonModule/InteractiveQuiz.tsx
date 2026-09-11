@@ -33,10 +33,10 @@ export const InteractiveQuiz: React.FC = () => {
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
             <Award className="w-6 h-6 text-emerald-400" />
-            <span>三级考点代码填空自测演练</span>
+            <span>本支代码填空自测</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            涵盖高频分箱参数、类型转换、SMOTE采样、维度转置与OpenCV通道转换等关键考点
+            针对当前三级支线：分箱参数、类型转换、SMOTE、维度转置与 OpenCV 通道转换等
           </p>
         </div>
 

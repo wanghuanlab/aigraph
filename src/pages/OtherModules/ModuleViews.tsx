@@ -117,9 +117,9 @@ export const MockExamView: React.FC<UpcomingModuleProps> = ({ onGoToPython }) =>
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-800 text-amber-300 text-xs font-medium border border-slate-700">
           <span>模块四 · 规划中</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-white">人工智能训练师全真机考模拟中心</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white">模拟考场</h2>
         <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
-          提供与官方考场 1:1 还原的倒计时机考界面、Jupyter Notebook 运行检测、结果截图上传模拟与自动评分系统。
+          规划中的认证演练模块，与知识图谱、技术栈学习并列。当前请先从 Python 支线的实操项目练起。
         </p>
       </div>
 
@@ -128,7 +128,7 @@ export const MockExamView: React.FC<UpcomingModuleProps> = ({ onGoToPython }) =>
           onClick={onGoToPython}
           className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-brand-600/30"
         >
-          <span>立即练习 Python 实操真题 (1.1.1~3.2.5)</span>
+          <span>返回 Python 当前支线</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

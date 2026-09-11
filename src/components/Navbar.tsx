@@ -1,187 +1,206 @@
-import React from 'react';
-import { 
-  Sparkles, 
-  Terminal, 
-  Cpu, 
-  BrainCircuit, 
+import React, { useState } from "react";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+import {
+  BrainCircuit,
+  Network,
+  Library,
+  Home,
+  Terminal,
+  Cpu,
+  Sparkles,
   Award,
   BookOpen,
   Code2,
   FileCheck,
   AlertTriangle,
-  HelpCircle
-} from 'lucide-react';
+  HelpCircle,
+  Search,
+  Menu,
+  X,
+  ChevronRight,
+  ArrowUpRight,
+} from "lucide-react";
 
-export type MainModule = 'python' | 'ml' | 'dl' | 'exam';
-export type PythonSubTab = 'overview' | 'exams' | 'cheatsheet' | 'pitfalls' | 'quiz';
-
+export type MainModule =
+  "home" | "graph" | "resources" | "python" | "ml" | "dl" | "exam";
+export type PythonSubTab =
+  "overview" | "exams" | "cheatsheet" | "pitfalls" | "quiz";
+export const studyTabs = [
+  { id: "overview" as const, label: "知识全景图谱", icon: BookOpen },
+  { id: "exams" as const, label: "实操项目精讲", icon: FileCheck },
+  { id: "cheatsheet" as const, label: "高频 API 速查", icon: Code2 },
+  { id: "pitfalls" as const, label: "易错避坑指南", icon: AlertTriangle },
+  { id: "quiz" as const, label: "交互自测", icon: HelpCircle },
+];
 interface NavbarProps {
   activeModule: MainModule;
   onSelectModule: (module: MainModule) => void;
   activeSubTab: PythonSubTab;
   onSelectSubTab: (subTab: PythonSubTab) => void;
 }
-
 export const Navbar: React.FC<NavbarProps> = ({
   activeModule,
   onSelectModule,
   activeSubTab,
-  onSelectSubTab
+  onSelectSubTab,
 }) => {
+  const [open, setOpen] = useState(false);
+  const select = (module: MainModule) => {
+    onSelectModule(module);
+    setOpen(false);
+  };
   return (
-    <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-      {/* Top Main Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onSelectModule('python')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-brand-500/20 ring-1 ring-white/20">
-              <BrainCircuit className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                  AIGraph
-                </span>
-                <span className="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/20 text-brand-300 rounded-full border border-brand-500/30">
-                  知识体系
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">人工智能全栈知识图谱与实战研习社</p>
-            </div>
-          </div>
-
-          {/* Module Switcher Tabs */}
-          <nav className="hidden md:flex items-center space-x-1 bg-slate-800/60 p-1.5 rounded-xl border border-slate-700/60">
+    <>
+      <header className="site-header">
+        <button
+          className="brand"
+          onClick={() => select("home")}
+          aria-label="AIGraph 首页"
+        >
+          <span className="brand-mark">
+            <BrainCircuit size={23} />
+          </span>
+          <span>
+            AIGraph<span className="brand-caption">知识图谱 · 实战研习社</span>
+          </span>
+        </button>
+        <nav className="top-nav" aria-label="全站导航">
+          {(
+            [
+              { id: "home", label: "首页" },
+              { id: "graph", label: "知识图谱" },
+              { id: "resources", label: "学习资源" },
+            ] as const
+          ).map((item) => (
             <button
-              onClick={() => onSelectModule('python')}
-              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeModule === 'python'
-                  ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
-              }`}
+              key={item.id}
+              className={activeModule === item.id ? "active" : ""}
+              aria-current={activeModule === item.id ? "page" : undefined}
+              onClick={() => select(item.id)}
             >
-              <Terminal className="w-4 h-4" />
-              <span>Python 语言 & 三级考点</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              {item.label}
             </button>
-
-            <button
-              onClick={() => onSelectModule('ml')}
-              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeModule === 'ml'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30'
-              }`}
-            >
-              <Cpu className="w-4 h-4" />
-              <span>机器学习算法</span>
-              <span className="text-[10px] bg-slate-700 text-slate-400 px-1.5 rounded">规划中</span>
-            </button>
-
-            <button
-              onClick={() => onSelectModule('dl')}
-              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeModule === 'dl'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30'
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>深度学习与大模型</span>
-              <span className="text-[10px] bg-slate-700 text-slate-400 px-1.5 rounded">规划中</span>
-            </button>
-
-            <button
-              onClick={() => onSelectModule('exam')}
-              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeModule === 'exam'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              <span>模拟考场</span>
-              <span className="text-[10px] bg-slate-700 text-slate-400 px-1.5 rounded">规划中</span>
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      {/* Secondary Sub-nav for Python Module */}
-      {activeModule === 'python' && (
-        <div className="bg-slate-950/80 border-t border-slate-800/80 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto py-2.5">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <button
-                onClick={() => onSelectSubTab('overview')}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  activeSubTab === 'overview'
-                    ? 'bg-slate-800 text-brand-400 border border-brand-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>知识全景图谱</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSubTab('exams')}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  activeSubTab === 'exams'
-                    ? 'bg-slate-800 text-brand-400 border border-brand-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-              >
-                <FileCheck className="w-4 h-4" />
-                <span>20套真题精讲 (1.1.1~3.2.5)</span>
-                <span className="bg-brand-500/20 text-brand-300 text-[10px] px-1.5 py-0.2 rounded-full">20</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSubTab('cheatsheet')}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  activeSubTab === 'cheatsheet'
-                    ? 'bg-slate-800 text-brand-400 border border-brand-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-              >
-                <Code2 className="w-4 h-4" />
-                <span>高频 API 速查</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSubTab('pitfalls')}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  activeSubTab === 'pitfalls'
-                    ? 'bg-slate-800 text-amber-400 border border-amber-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-              >
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                <span>易错避坑指南</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSubTab('quiz')}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  activeSubTab === 'quiz'
-                    ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-              >
-                <HelpCircle className="w-4 h-4 text-emerald-400" />
-                <span>考点交互自测</span>
-              </button>
-            </div>
-
-            <div className="hidden lg:flex items-center text-xs text-slate-500 space-x-1">
-              <span>考纲版本：</span>
-              <span className="text-slate-300 font-mono font-medium">人社部人工智能训练师（三级/高级工）</span>
-            </div>
-          </div>
-        </div>
+          ))}
+        </nav>
+        <button
+          className="header-search"
+          aria-label="搜索知识、API、实操项目"
+          onClick={() => select("resources")}
+        >
+          <Search size={16} />
+          <span>搜索知识、API、实操项目</span>
+          <ArrowUpRight size={14} />
+        </button>
+        <ThemeSwitcher />
+        <button
+          className="menu-toggle"
+          aria-label={open ? "关闭目录" : "打开目录"}
+          aria-expanded={open}
+          aria-controls="site-sidebar"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
+      </header>
+      {open && (
+        <button
+          className="sidebar-overlay"
+          aria-label="关闭目录遮罩"
+          onClick={() => setOpen(false)}
+        />
       )}
-    </header>
+      <aside
+        id="site-sidebar"
+        className={`site-sidebar ${open ? "is-open" : ""}`}
+        aria-label="学习目录"
+      >
+        <div className="sidebar-section-label">探索 AIGraph</div>
+        {(
+          [
+            { id: "home", label: "研习首页", icon: Home },
+            { id: "graph", label: "全栈知识图谱", icon: Network },
+            { id: "resources", label: "学习资源库", icon: Library },
+          ] as const
+        ).map((item) => (
+          <button
+            key={item.id}
+            className={`side-link ${activeModule === item.id ? "active" : ""}`}
+            onClick={() => select(item.id)}
+            aria-current={activeModule === item.id ? "page" : undefined}
+          >
+            <item.icon size={17} />
+            {item.label}
+          </button>
+        ))}
+        <div className="sidebar-section-label section-gap">技术领域</div>
+        <button
+          className={`side-link ${activeModule === "python" ? "parent-active" : ""}`}
+          onClick={() => select("python")}
+        >
+          <Terminal size={17} />
+          Python 语言
+          <ChevronRight size={14} className="ml-auto" />
+        </button>
+        <div className="study-tree">
+          <span>人工智能训练师</span>
+          <button
+            className="level-link"
+            onClick={() => {
+              select("python");
+              onSelectSubTab("overview");
+            }}
+          >
+            三级 <span className="status-dot" /> <small>部分已收录</small>
+          </button>
+          {activeModule === "python" && (
+            <nav aria-label="三级研习目录" className="study-tabs">
+              {studyTabs.map((item) => (
+                <button
+                  key={item.id}
+                  className={activeSubTab === item.id ? "active" : ""}
+                  aria-current={activeSubTab === item.id ? "page" : undefined}
+                  onClick={() => {
+                    onSelectSubTab(item.id);
+                    setOpen(false);
+                  }}
+                >
+                  <item.icon size={14} />
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          )}
+        </div>
+        {(
+          [
+            { id: "ml", label: "机器学习算法", icon: Cpu },
+            { id: "dl", label: "深度学习与大模型", icon: Sparkles },
+            { id: "exam", label: "模拟考场", icon: Award },
+          ] as const
+        ).map((item) => (
+          <button
+            key={item.id}
+            className={`side-link planned ${activeModule === item.id ? "active" : ""}`}
+            onClick={() => select(item.id)}
+          >
+            <item.icon size={17} />
+            <span>{item.label}</span>
+            <small>规划</small>
+          </button>
+        ))}
+        <div className="sidebar-note">
+          <Network size={20} />
+          <strong>让知识连接，让学习发生。</strong>
+          <p>
+            从一个知识点出发，
+            <br />
+            逐步构建你的 AI 技术体系。
+          </p>
+        </div>
+        <div className="sidebar-bottom">
+          持续生长的 AI 知识库 <span className="status-dot" />
+        </div>
+      </aside>
+    </>
   );
 };

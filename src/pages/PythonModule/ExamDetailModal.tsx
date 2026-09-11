@@ -1,308 +1,320 @@
-import React, { useState } from 'react';
-import { ExamQuestion } from '../../types';
-import { CodeBlock } from '../../components/CodeBlock';
-import { 
-  X, 
-  Database, 
-  FileText, 
-  CheckCircle2, 
-  AlertTriangle, 
-  HelpCircle, 
-  BookOpen, 
-  Code2, 
-  Award,
-  Layers
-} from 'lucide-react';
-
+import React, { useState, useEffect, useRef } from "react";
+import { ExamQuestion } from "../../types";
+import { CodeBlock } from "../../components/CodeBlock";
+import {
+  X,
+  ArrowRight,
+  ChevronDown,
+  BookOpen,
+  Code2,
+  ListChecks,
+  Lightbulb,
+} from "lucide-react";
 interface ExamDetailModalProps {
   exam: ExamQuestion;
   onClose: () => void;
 }
-
-export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({ exam, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'tasks' | 'code' | 'blanks' | 'summary'>('code');
-  const [codeMode, setCodeMode] = useState<'solution' | 'template'>('solution');
+const sections = [
+  { id: "tasks", label: "理解任务", icon: BookOpen },
+  { id: "code", label: "动手练习", icon: Code2 },
+  { id: "blanks", label: "查看解析", icon: ListChecks },
+  { id: "summary", label: "复习要点", icon: Lightbulb },
+] as const;
+type Section = (typeof sections)[number]["id"];
+export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
+  exam,
+  onClose,
+}) => {
+  const [activeTab, setActiveTab] = useState<Section>("tasks");
+  const [codeMode, setCodeMode] = useState<"template" | "solution">("template");
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const switchSection = (id: Section) => {
+    setActiveTab(id);
+    bodyRef.current?.scrollTo(0, 0);
+  };
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeRef.current();
+      if (event.key === "Tab") {
+        const focusable = Array.from(
+          dialogRef.current?.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), a[href], input, summary, [tabindex="0"]',
+          ) || [],
+        );
+        const visible = focusable.filter(
+          (element) => element.getClientRects().length > 0,
+        );
+        const first = visible[0],
+          last = visible[visible.length - 1];
+        if (
+          event.shiftKey &&
+          (document.activeElement === first ||
+            document.activeElement === dialogRef.current)
+        ) {
+          event.preventDefault();
+          last?.focus();
+        } else if (
+          !event.shiftKey &&
+          (document.activeElement === last ||
+            document.activeElement === dialogRef.current)
+        ) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", handleKey);
+      previous?.focus();
+    };
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
-      <div className="relative bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-10">
-          <div className="flex items-center space-x-3">
-            <div className="px-3 py-1 bg-brand-500/20 text-brand-300 font-mono font-bold rounded-lg border border-brand-500/30 text-sm">
-              {exam.id}
+    <div className="study-modal-backdrop">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exam-dialog-title"
+        tabIndex={-1}
+        className="study-modal"
+      >
+        <header className="study-modal-header">
+          <div>
+            <div className="project-meta">
+              <span>实操 {exam.id}</span>
+              <span>{exam.difficulty}</span>
+              <span>{exam.tasks.length} 项任务</span>
             </div>
+            <h2 id="exam-dialog-title">{exam.title}</h2>
+          </div>
+          <button
+            className="icon-button"
+            onClick={onClose}
+            aria-label="关闭项目详情"
+          >
+            <X size={21} />
+          </button>
+        </header>
+        <nav className="study-modal-nav" aria-label="项目学习步骤">
+          {sections.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              aria-current={activeTab === id ? "step" : undefined}
+              onClick={() => switchSection(id)}
+            >
+              <Icon size={16} />
+              {label}
+            </button>
+          ))}
+        </nav>
+        <div className="study-modal-body" ref={bodyRef}>
+          {activeTab === "tasks" && (
+            <div className="task-reader">
+              <section>
+                <h3>项目背景</h3>
+                <p>{exam.scenario}</p>
+              </section>
+              <section>
+                <h3>你要完成什么</h3>
+                <ol className="learning-task-list">
+                  {exam.tasks.map((task) => (
+                    <li key={task.order}>
+                      <span>{task.order}</span>
+                      <p>{task.description}</p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+              <details className="learning-disclosure">
+                <summary>
+                  数据集与字段 <span>{exam.dataset.fields.length} 个字段</span>
+                  <ChevronDown size={16} />
+                </summary>
+                <div>
+                  <p className="dataset-name">{exam.dataset.name}</p>
+                  <p>{exam.dataset.description}</p>
+                  <div className="field-table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>字段</th>
+                          <th>说明</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {exam.dataset.fields.map((field) => (
+                          <tr key={field.name}>
+                            <td>
+                              <code>{field.name}</code>
+                            </td>
+                            <td>{field.desc}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </details>
+              <details className="learning-disclosure">
+                <summary>
+                  练习准备与提交要求 <ChevronDown size={16} />
+                </summary>
+                <div>
+                  <h4>依赖库</h4>
+                  <p className="dependency-list">
+                    {exam.coreLibraries.join(" / ")}
+                  </p>
+                  <h4>技能要求</h4>
+                  <ul>
+                    {exam.skillRequirements.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h4>质量要求</h4>
+                  <ul>
+                    {exam.qualityMetrics.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h4>提交文件</h4>
+                  {exam.tasks.map((task) => (
+                    <p key={task.order}>
+                      任务 {task.order}：<code>{task.targetFile}</code>
+                    </p>
+                  ))}
+                </div>
+              </details>
+            </div>
+          )}
+          {activeTab === "code" && (
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-mono text-slate-400">{exam.categoryName}</span>
-                <span className="text-slate-600">·</span>
-                <span className={`text-[11px] px-2 py-0.2 rounded-full font-medium ${
-                  exam.difficulty === '基础' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30' :
-                  exam.difficulty === '中等' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' :
-                  'bg-purple-500/10 text-purple-400 border border-purple-500/30'
-                }`}>
-                  {exam.difficulty}
+              <div className="practice-toolbar">
+                <div
+                  className="segmented-control"
+                  role="group"
+                  aria-label="代码视图"
+                >
+                  <button
+                    aria-pressed={codeMode === "template"}
+                    onClick={() => setCodeMode("template")}
+                  >
+                    填空练习
+                  </button>
+                  <button
+                    aria-pressed={codeMode === "solution"}
+                    onClick={() => setCodeMode("solution")}
+                  >
+                    参考答案
+                  </button>
+                </div>
+                <span>复制到本地 Notebook 中运行</span>
+              </div>
+              <CodeBlock
+                code={
+                  codeMode === "template"
+                    ? exam.codeTemplate
+                    : exam.codeSolution
+                }
+                title={
+                  codeMode === "template"
+                    ? "补全下划线处的代码"
+                    : "完整参考代码"
+                }
+              />
+              <p className="practice-note">
+                先独立补全，再对照答案。理解每一步为什么这样写。
+              </p>
+            </div>
+          )}
+          {activeTab === "blanks" && (
+            <div className="explanation-reader">
+              <div className="reader-heading">
+                <h3>逐空理解</h3>
+                <span>
+                  {exam.blanksExplanation.length} 个填空 · 共{" "}
+                  {exam.blanksExplanation.reduce(
+                    (sum, item) => sum + item.points,
+                    0,
+                  )}{" "}
+                  分
                 </span>
               </div>
-              <h2 className="text-base sm:text-xl font-bold text-white mt-0.5">{exam.title}</h2>
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Navigation Tabs inside Modal */}
-        <div className="flex items-center px-4 sm:px-6 border-b border-slate-800 bg-slate-950/60 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('code')}
-            className={`flex items-center space-x-2 py-3 px-4 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'code'
-                ? 'border-brand-500 text-brand-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Code2 className="w-4 h-4" />
-            <span>代码实现与填空对比</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('blanks')}
-            className={`flex items-center space-x-2 py-3 px-4 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'blanks'
-                ? 'border-brand-500 text-brand-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Award className="w-4 h-4" />
-            <span>逐空得分点详解 ({exam.blanksExplanation.length}空)</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('tasks')}
-            className={`flex items-center space-x-2 py-3 px-4 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'tasks'
-                ? 'border-brand-500 text-brand-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <FileText className="w-4 h-4" />
-            <span>业务场景与考核要求</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('summary')}
-            className={`flex items-center space-x-2 py-3 px-4 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'summary'
-                ? 'border-brand-500 text-brand-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <BookOpen className="w-4 h-4" />
-            <span>核心考点小结</span>
-          </button>
-        </div>
-
-        {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-          {/* Tab 1: Code */}
-          {activeTab === 'code' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs text-slate-400">切换展示视图：</span>
-                  <div className="flex p-1 rounded-lg bg-slate-800 border border-slate-700/80 text-xs">
-                    <button
-                      onClick={() => setCodeMode('solution')}
-                      className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                        codeMode === 'solution'
-                          ? 'bg-brand-600 text-white font-medium shadow'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      标准满分解答源码
-                    </button>
-                    <button
-                      onClick={() => setCodeMode('template')}
-                      className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                        codeMode === 'template'
-                          ? 'bg-brand-600 text-white font-medium shadow'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      官方考卷填空模板 (ipynb)
-                    </button>
+              {exam.blanksExplanation.map((blank) => (
+                <section className="blank-explanation" key={blank.blankIndex}>
+                  <div className="blank-heading">
+                    <span>填空 {blank.blankIndex}</span>
+                    <small>{blank.points} 分</small>
                   </div>
-                </div>
-
-                <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-mono">
-                  <span>依赖库：</span>
-                  {exam.coreLibraries.map((lib) => (
-                    <span key={lib} className="px-2 py-0.5 rounded bg-slate-800 text-brand-300">
-                      {lib}
-                    </span>
+                  <code className="answer-snippet">{blank.code}</code>
+                  <p>{blank.explanation}</p>
+                  {blank.pitfall && (
+                    <details className="blank-pitfall">
+                      <summary>易错提醒</summary>
+                      <p>{blank.pitfall}</p>
+                    </details>
+                  )}
+                </section>
+              ))}
+            </div>
+          )}
+          {activeTab === "summary" && (
+            <div className="task-reader">
+              <section>
+                <h3>带走这些知识点</h3>
+                <ul className="takeaway-list">
+                  {exam.keyTakeaways.map((point, index) => (
+                    <li key={index}>{point}</li>
                   ))}
-                </div>
-              </div>
-
-              <CodeBlock
-                code={codeMode === 'solution' ? exam.codeSolution : exam.codeTemplate}
-                title={codeMode === 'solution' ? `${exam.id}.ipynb - 官方标准解答完整代码` : `${exam.id}.ipynb - 官方填空下划线模板`}
-              />
-
-              <div className="bg-slate-800/40 rounded-xl p-4 border border-slate-700/60 text-xs text-slate-300">
-                <span className="font-semibold text-brand-300">机考提示：</span>
-                在官方考试界面中，代码均预先写好了骨架，考生需在下划线 <code className="bg-slate-900 px-1 py-0.5 rounded text-amber-300">_____________</code> 处补充核心函数或逻辑调用，保存运行后截图结果。
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Blanks Explanation */}
-          {activeTab === 'blanks' && (
-            <div className="space-y-4">
-              <div className="text-xs text-slate-400 flex items-center justify-between">
-                <span>本题考核的填空位置、标准语法及各空得分权重：</span>
-                <span className="text-brand-300 font-medium">总分分值：约 15 ~ 25 分 / 题</span>
-              </div>
-
-              <div className="space-y-3">
-                {exam.blanksExplanation.map((blank, index) => (
-                  <div 
-                    key={index}
-                    className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-slate-700 transition-all space-y-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="w-5 h-5 rounded-full bg-brand-500/20 text-brand-300 font-mono font-bold text-xs flex items-center justify-center">
-                          {blank.blankIndex}
-                        </span>
-                        <span className="text-xs font-semibold text-white">填空序号 #{blank.blankIndex}</span>
-                      </div>
-                      <span className="px-2 py-0.5 text-xs font-mono font-bold text-amber-400 bg-amber-500/10 rounded border border-amber-500/20">
-                        {blank.points} 分
-                      </span>
-                    </div>
-
-                    <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto">
-                      <code>{blank.code}</code>
-                    </div>
-
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      <span className="text-slate-500 font-medium">考查点解析：</span>
-                      {blank.explanation}
-                    </p>
-
-                    {blank.pitfall && (
-                      <div className="mt-1.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-start space-x-2">
-                        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                        <span><strong>易错避坑：</strong>{blank.pitfall}</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tab 3: Tasks & Scenario */}
-          {activeTab === 'tasks' && (
-            <div className="space-y-6">
-              {/* Scenario */}
-              <div>
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2 mb-2">
-                  <Database className="w-4 h-4 text-brand-400" />
-                  <span>工作任务背景与数据源</span>
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                  {exam.scenario}
-                </p>
-              </div>
-
-              {/* Dataset Fields */}
-              <div>
-                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  数据集字段字典 ({exam.dataset.name})：
-                </h4>
-                <div className="overflow-x-auto rounded-xl border border-slate-800">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-800/80 text-slate-300 font-mono">
-                      <tr>
-                        <th className="px-4 py-2.5 font-semibold">字段名称 (Column)</th>
-                        <th className="px-4 py-2.5 font-semibold">业务含义与规范说明</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800 bg-slate-900/60 font-sans">
-                      {exam.dataset.fields.map((field) => (
-                        <tr key={field.name} className="hover:bg-slate-800/40">
-                          <td className="px-4 py-2 font-mono text-brand-300 font-medium">{field.name}</td>
-                          <td className="px-4 py-2 text-slate-300">{field.desc}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Specific Tasks */}
-              <div>
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2 mb-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>考核实操任务清单及成果物提交要求</span>
-                </h3>
-                <div className="space-y-2.5">
-                  {exam.tasks.map((task) => (
-                    <div key={task.order} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-start justify-between">
-                      <div className="space-y-1">
-                        <span className="text-xs font-semibold text-brand-400">任务 ({task.order})</span>
-                        <p className="text-xs text-slate-300">{task.description}</p>
-                      </div>
-                      <span className="px-2.5 py-1 rounded-md bg-slate-800 text-amber-300 font-mono text-xs border border-slate-700 whitespace-nowrap ml-4">
-                        {task.targetFile}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 4: Summary */}
-          {activeTab === 'summary' && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <BookOpen className="w-4 h-4 text-brand-400" />
-                <span>知识点沉淀与考点解构</span>
-              </h3>
-              <div className="space-y-2.5">
-                {exam.keyTakeaways.map((point, index) => (
-                  <div key={index} className="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">{point}</p>
-                  </div>
-                ))}
-              </div>
+                </ul>
+              </section>
+              <p className="learning-tip">
+                <Lightbulb size={18} />
+                <span>合上答案，试着解释核心步骤，再独立完成一次练习。</span>
+              </p>
             </div>
           )}
         </div>
-
-        {/* Modal Footer */}
-        <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between text-xs text-slate-400">
-          <div className="flex items-center space-x-2">
-            <span>官方考核时间：<strong>30 分钟</strong></span>
-            <span>·</span>
-            <span>试题编号：<strong className="font-mono text-slate-300">{exam.id}</strong></span>
-          </div>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors cursor-pointer"
-          >
-            关闭窗口
-          </button>
-        </div>
+        <footer className="study-modal-footer">
+          <span>Python / 人工智能训练师 / 三级</span>
+          {activeTab === "summary" ? (
+            <button
+              className="secondary-button"
+              onClick={() => {
+                setCodeMode("template");
+                switchSection("code");
+              }}
+            >
+              再练一次 <ArrowRight size={15} />
+            </button>
+          ) : (
+            <button
+              className="primary-button"
+              onClick={() =>
+                switchSection(
+                  sections[sections.findIndex((s) => s.id === activeTab) + 1]
+                    .id,
+                )
+              }
+            >
+              {activeTab === "tasks"
+                ? "开始练习"
+                : activeTab === "code"
+                  ? "查看解析"
+                  : "复习要点"}
+              <ArrowRight size={15} />
+            </button>
+          )}
+        </footer>
       </div>
     </div>
   );

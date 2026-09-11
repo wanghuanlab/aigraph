@@ -10,10 +10,10 @@ export const ExamPitfalls: React.FC = () => {
       <div>
         <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
           <AlertTriangle className="w-6 h-6 text-amber-400" />
-          <span>三级机考易错避坑与失分点剖析</span>
+          <span>本支易错避坑</span>
         </h2>
         <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          根据实操机考评分标准梳理出的高频“零分陷阱”。避开这些失分细节，稳保满分通过。
+          人工智能训练师 · 三级实操中的高频陷阱与失分细节，属于当前 Python 支线的配套材料。
         </p>
       </div>
 
@@ -22,6 +22,8 @@ export const ExamPitfalls: React.FC = () => {
         {pitfallsData.map((item) => (
           <div
             key={item.id}
+            data-resource-title={item.title}
+            style={{ scrollMarginTop: 100 }}
             className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 hover:border-slate-700 transition-all shadow-lg"
           >
             {/* Header */}
