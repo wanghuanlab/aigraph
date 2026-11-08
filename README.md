@@ -6,7 +6,7 @@
 
 ## 当前进度
 
-目前开放的是 **Python 语言 → 人工智能训练师 → 三级** 这一小段，包含知识图谱、实操项目、API 手册与互动自测。机器学习、深度学习 / 大模型、模拟考场等模块仍在规划中。
+目前开放的是 **Python 语言 → 人工智能训练师 → 三级** 这一小段，包含知识图谱、实操项目、API 手册、互动自测，以及考试中心的实操练习和模拟考试。理论考试、AI 评分和错题本尚未开放。机器学习、深度学习 / 大模型等模块仍在规划中。
 
 ## 功能
 
@@ -37,7 +37,9 @@ npm run preview
 
 ## 仓库说明
 
-公开仓库只包含站点源码（`src/`）及构建配置。本地讲义、Notebook 与练习目录不纳入版本库。
+公开仓库只包含站点源码（`src/`）及构建配置。本地讲义、Notebook、练习目录和实操考试素材不纳入版本库。
+
+实操题面在 `exam-data/practical/questions.json`。下载素材由 `python3 scripts/prepare-exam-assets.py` 生成到 `exam-assets/`，目录结构与对象存储路径一致，不进入 git。本地开发时 Vite 会提供 `/exam-assets`；上线前把 `VITE_EXAM_ASSET_BASE_URL` 指到素材所在的域名，见 `.env.example`。
 
 ## License
 

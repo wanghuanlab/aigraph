@@ -17,8 +17,8 @@ import { InteractiveQuiz } from "./pages/PythonModule/InteractiveQuiz";
 import {
   MachineLearningView,
   DeepLearningView,
-  MockExamView,
 } from "./pages/OtherModules/ModuleViews";
+import { ExamCenter } from "./pages/ExamModule/ExamCenter";
 import { examQuestions } from "./data/examQuestions";
 import { ExamDetailModal } from "./pages/PythonModule/ExamDetailModal";
 import { ExamQuestion } from "./types";
@@ -43,6 +43,8 @@ function readLocation() {
       : ("overview" as PythonSubTab),
     category: params.get("category") || undefined,
     query: params.get("q") || "",
+    examTab: params.get("examTab") === "theory" ? "theory" as const : "practical" as const,
+    sessionId: params.get("session") || undefined,
   };
 }
 export const App: React.FC = () => {
@@ -94,8 +96,18 @@ export const App: React.FC = () => {
     python: "Python 语言",
     ml: "机器学习算法",
     dl: "深度学习与大模型",
-    exam: "模拟考场",
+    exam: "考试中心",
   };
+  const openExamSession = (id: string) => {
+    window.location.hash = new URLSearchParams({ module: "exam", session: id }).toString();
+  };
+  const selectExamTab = (value: "practical" | "theory") => {
+    window.location.hash = new URLSearchParams({ module: "exam", examTab: value }).toString();
+  };
+  if (module === "exam" && location.sessionId) {
+    return <ExamCenter sessionId={location.sessionId} onOpenSession={openExamSession}
+      onBack={() => navigate("exam")} onTab={selectExamTab} />;
+  }
   return (
     <div className="app-shell">
       <a
@@ -174,10 +186,8 @@ export const App: React.FC = () => {
             />
           )}
           {module === "exam" && (
-            <MockExamView
-              moduleKey="exam"
-              onGoToPython={() => study("exams")}
-            />
+            <ExamCenter tab={location.examTab} onOpenSession={openExamSession}
+              onBack={() => navigate("exam")} onTab={selectExamTab} />
           )}
         </main>
         <Footer onSelectModule={(m) => navigate(m)} />

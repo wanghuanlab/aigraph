@@ -18,18 +18,36 @@ export interface PracticalAnswerSection {
   fields: PracticalAnswerField[];
 }
 
+export type ContentBlock =
+  | { type: 'heading'; level: number; text: string; hidden?: boolean }
+  | { type: 'paragraph'; text: string; hidden?: boolean }
+  | { type: 'note'; text: string; hidden?: boolean }
+  | { type: 'list'; style: 'paren-number' | 'number' | 'step' | 'bullet'; items: ContentListItem[]; hidden?: boolean }
+  | { type: 'options'; stem: string; choices: string[]; hidden?: boolean }
+  | { type: 'table'; columns: string[]; rows: string[][]; note?: string; hidden?: boolean };
+
+export interface ContentListItem {
+  marker: string;
+  blocks: ContentBlock[];
+}
+
+export interface ExamAssetRecord {
+  name?: string;
+  key: string;
+  bytes: number;
+  sha256: string;
+  archivePath?: string;
+}
+
 export interface PracticalQuestion {
   id: string;
   groupId: string;
   title: string;
   points: number;
-  suggestedMinutes: number;
-  sourcePages: number[];
-  /** Rendered original PDF task pages; never include the rubric or solutions. */
-  pageImages: string[];
-  materialUrl: string;
-  materialSize: number;
-  materialFiles: string[];
+  durationMinutes: number;
+  source: { pdf: string; pages: number[] };
+  content: ContentBlock[];
+  materials: { zip: ExamAssetRecord; files: ExamAssetRecord[] };
   answerSections: PracticalAnswerSection[];
 }
 

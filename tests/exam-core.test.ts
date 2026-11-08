@@ -18,8 +18,9 @@ const GROUP_POINTS: Record<string, number> = {
 const bank: PracticalQuestion[] = Object.entries(GROUP_POINTS).flatMap(([groupId, points]) =>
   Array.from({ length: 5 }, (_, i) => ({
     id: `${groupId}.${i + 1}`, groupId, points, title: `原题 ${groupId}.${i + 1}`,
-    suggestedMinutes: 15, sourcePages: [1], pageImages: ['/question.png'],
-    materialUrl: '/materials.zip', materialSize: 1, materialFiles: ['original.csv'],
+    durationMinutes: 15, source: { pdf: 'original.pdf', pages: [1] }, content: [],
+    materials: { zip: { key: 'practical/v/original.zip', bytes: 1, sha256: 'a'.repeat(64) },
+      files: [{ name: 'original.csv', key: 'practical/v/files/original.csv', bytes: 1, sha256: 'b'.repeat(64) }] },
     answerSections: [{ id: 'tasks', title: '答题', fields: [
       { id: 'description', label: '说明', kind: 'text', required: true },
       { id: 'result', label: '结果', kind: 'file', required: true },

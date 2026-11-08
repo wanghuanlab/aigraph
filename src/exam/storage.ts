@@ -235,3 +235,28 @@ export class IndexedDBExamRepository implements ExamRepository {
 }
 
 export const examRepository: ExamRepository = new IndexedDBExamRepository();
+
+const PERSIST_KEY = 'aigraph-exam-storage-persist';
+
+export function readExamStoragePersistence(): 'granted' | 'denied' | 'unknown' {
+  try {
+    const value = localStorage.getItem(PERSIST_KEY);
+    if (value === 'granted' || value === 'denied') return value;
+  } catch {
+    /* Private browsing can block localStorage; the cautious copy still applies. */
+  }
+  return 'unknown';
+}
+
+/** Ask the browser to keep answer data. Unsupported or rejected requests are not errors. */
+export async function requestExamStoragePersistence(): Promise<'granted' | 'denied'> {
+  let granted = false;
+  try {
+    if (navigator.storage?.persist) granted = await navigator.storage.persist();
+  } catch {
+    granted = false;
+  }
+  const status = granted ? 'granted' : 'denied';
+  try { localStorage.setItem(PERSIST_KEY, status); } catch { /* ignore */ }
+  return status;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Sparkles, Award, ArrowRight, Layers, CheckCircle2 } from 'lucide-react';
+import { Cpu, Sparkles, ArrowRight, Layers, CheckCircle2 } from 'lucide-react';
 import { MainModule } from '../../components/Navbar';
 
 interface UpcomingModuleProps {
@@ -100,35 +100,6 @@ export const DeepLearningView: React.FC<UpcomingModuleProps> = ({ onGoToPython }
           className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-brand-600/30"
         >
           <span>返回研习 Module 1: Python 语言核心</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export const MockExamView: React.FC<UpcomingModuleProps> = ({ onGoToPython }) => {
-  return (
-    <div className="max-w-4xl mx-auto py-12 px-4 text-center space-y-6">
-      <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/10">
-        <Award className="w-8 h-8" />
-      </div>
-      <div className="space-y-2">
-        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-800 text-amber-300 text-xs font-medium border border-slate-700">
-          <span>模块四 · 规划中</span>
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-white">模拟考场</h2>
-        <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
-          规划中的认证演练模块，与知识图谱、技术栈学习并列。当前请先从 Python 支线的实操项目练起。
-        </p>
-      </div>
-
-      <div className="pt-4">
-        <button
-          onClick={onGoToPython}
-          className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-brand-600/30"
-        >
-          <span>返回 Python 当前支线</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

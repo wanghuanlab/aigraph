@@ -70,6 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               { id: "home", label: "首页" },
               { id: "graph", label: "知识图谱" },
               { id: "resources", label: "学习资源" },
+              { id: "exam", label: "考试中心" },
             ] as const
           ).map((item) => (
             <button
@@ -175,7 +176,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           [
             { id: "ml", label: "机器学习算法", icon: Cpu },
             { id: "dl", label: "深度学习与大模型", icon: Sparkles },
-            { id: "exam", label: "模拟考场", icon: Award },
           ] as const
         ).map((item) => (
           <button
@@ -188,6 +188,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <small>规划</small>
           </button>
         ))}
+        <button
+          className={`side-link ${activeModule === "exam" ? "active" : ""}`}
+          onClick={() => select("exam")}
+          aria-current={activeModule === "exam" ? "page" : undefined}
+        >
+          <Award size={17} /><span>考试中心</span>
+        </button>
         <div className="sidebar-note">
           <Network size={20} />
           <strong>让知识连接，让学习发生。</strong>
