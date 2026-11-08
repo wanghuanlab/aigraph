@@ -1,0 +1,1341 @@
+{
+  "bankVersion": "2026-11-08-original-f6059995-5cc00737",
+  "sourcePdf": {
+    "file": "3.2-人工智能训练师_3级_操作技能复习题.pdf",
+    "sha256": "f605999532767efa7ea17478ad2985e9e6f98f1d6043ef10c2820e32da0e23f8"
+  },
+  "sourceArchive": {
+    "file": "人工智能训练师三级上网素材.rar",
+    "sha256": "5cc0073771a708bf3f704c251ba88af941b2aacd9682cbbcea38f96d7a77777b"
+  },
+  "pageNumbering": "One-based PDF page order; printed page number is one less.",
+  "questions": [
+    {
+      "id": "1.1.1",
+      "title": "智能医疗系统中的业务数据处理流程设计",
+      "sourcePages": [
+        3,
+        4
+      ],
+      "firstExcludedRubricPage": 5,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.1/1.1.1.zip",
+          "bytes": 10869,
+          "sha256": "797d6f6e4230f26f43586827c6863714ffdd60a321754123b1b0c2a6917a632e"
+        },
+        "files": [
+          {
+            "name": "1.1.1.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.1/files/1.1.1.ipynb",
+            "bytes": 3932,
+            "sha256": "cb73a9dc78ce963419891cdb19e018e218e849d52657ef33ca4908aeb4b6e454",
+            "archivePath": "人工智能训练师三级上网素材/1.1.1plus/1.1.1.ipynb"
+          },
+          {
+            "name": "patient_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.1/files/patient_data.csv",
+            "bytes": 22996,
+            "sha256": "1dca56eed4f5a447e31a47e71a1bb0e645fc369dbd9507300b0cca0d3d6f8e91",
+            "archivePath": "人工智能训练师三级上网素材/1.1.1plus/patient_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.1.2",
+      "title": "智能农业系统中的业务数据采集和处理流程设计",
+      "sourcePages": [
+        8,
+        9
+      ],
+      "firstExcludedRubricPage": 10,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.2/1.1.2.zip",
+          "bytes": 169433,
+          "sha256": "d558929bda75531f244fa33c047fb58f1858f91800592617324889a284f54485"
+        },
+        "files": [
+          {
+            "name": "1.1.2.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.2/files/1.1.2.ipynb",
+            "bytes": 2998,
+            "sha256": "243aa4072426ca509e207311323694b6c19e73156cd38470112901f6578c58c9",
+            "archivePath": "人工智能训练师三级上网素材/1.1.2plus/1.1.2.ipynb"
+          },
+          {
+            "name": "sensor_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.2/files/sensor_data.csv",
+            "bytes": 604795,
+            "sha256": "c9d9b70f406bd014023ff96e8ad94afd217353954dbf3b648dd9a879b91d9bf4",
+            "archivePath": "人工智能训练师三级上网素材/1.1.2plus/sensor_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.1.3",
+      "title": "金融机构信用评估系统中的业务数据审核流程设计",
+      "sourcePages": [
+        13,
+        14
+      ],
+      "firstExcludedRubricPage": 15,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.3/1.1.3.zip",
+          "bytes": 76745,
+          "sha256": "34d81186269c77259a2ae086cbb55c8c1d0c81975663c5f00ac02233e03cb35a"
+        },
+        "files": [
+          {
+            "name": "1.1.3.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.3/files/1.1.3.ipynb",
+            "bytes": 3068,
+            "sha256": "82e22d5e692895134033657c2756b3d64f938562ba0240f63876dd1cc64186ce",
+            "archivePath": "人工智能训练师三级上网素材/1.1.3plus/1.1.3.ipynb"
+          },
+          {
+            "name": "credit_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.3/files/credit_data.csv",
+            "bytes": 583251,
+            "sha256": "2d040de2559c987043fec64aa5fc4ef1805f3bb1bc518bbb54989f3e15af9fe5",
+            "archivePath": "人工智能训练师三级上网素材/1.1.3plus/credit_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.1.4",
+      "title": "电商平台用户行为分析系统的数据采集与处理流程设计",
+      "sourcePages": [
+        18,
+        19
+      ],
+      "firstExcludedRubricPage": 20,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.4/1.1.4.zip",
+          "bytes": 16273,
+          "sha256": "edc0372975b2c30963ca791bc442203c2b22ac4831b1b1bd680416302d5b994e"
+        },
+        "files": [
+          {
+            "name": "1.1.4.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.4/files/1.1.4.ipynb",
+            "bytes": 3445,
+            "sha256": "df397270f56c343f410a460bd5d305b3267dda57ff55c9f5545b9d8f74bdf639",
+            "archivePath": "人工智能训练师三级上网素材/1.1.4plus/1.1.4.ipynb"
+          },
+          {
+            "name": "user_behavior_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.4/files/user_behavior_data.csv",
+            "bytes": 68060,
+            "sha256": "0147d06abc773fe47e16ea4c71003b553c99f159c8f3feeb71f76973a867aa91",
+            "archivePath": "人工智能训练师三级上网素材/1.1.4plus/user_behavior_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.1.5",
+      "title": "智能交通系统的数据采集、处理和审核流程设计",
+      "sourcePages": [
+        23,
+        24,
+        25
+      ],
+      "firstExcludedRubricPage": 26,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.5/1.1.5.zip",
+          "bytes": 17984,
+          "sha256": "855074d39c9bacc9809e98e422b4bbec378a8c653db5cd6b235f5d6e44149172"
+        },
+        "files": [
+          {
+            "name": "1.1.5.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.5/files/1.1.5.ipynb",
+            "bytes": 3548,
+            "sha256": "114385baeb1bdf072e209d0ecaf4a88fe9a4438f0f6751683baff9b363d8fb9f",
+            "archivePath": "人工智能训练师三级上网素材/1.1.5plus/1.1.5.ipynb"
+          },
+          {
+            "name": "vehicle_traffic_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.1.5/files/vehicle_traffic_data.csv",
+            "bytes": 52213,
+            "sha256": "8184e508e9787647d82963e0393db26750051d9739afbd2b870faa6674453f86",
+            "archivePath": "人工智能训练师三级上网素材/1.1.5plus/vehicle_traffic_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.2.1",
+      "title": "顾客评价情感识别业务模块效果优化",
+      "sourcePages": [
+        32
+      ],
+      "firstExcludedRubricPage": 33,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.1/1.2.1.zip",
+          "bytes": 10023,
+          "sha256": "b7e02f56208f9dea503433bd42a4913433edd4cf7121171eb548ab53304fe0af"
+        },
+        "files": [
+          {
+            "name": "1.2.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.1/files/1.2.1.docx",
+            "bytes": 12623,
+            "sha256": "48a98598bede2297e8ab2938efde428d991ad8147da9819d382786cddad44ee3",
+            "archivePath": "人工智能训练师三级上网素材/1.2.1plus/1.2.1.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.2.2",
+      "title": "老年人健康监测与管理服务业务模块效果优化",
+      "sourcePages": [
+        35
+      ],
+      "firstExcludedRubricPage": 36,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.2/1.2.2.zip",
+          "bytes": 10055,
+          "sha256": "5e92cff6110045f29d0f33336bea8434675f2f8650a2d1ea964576bab374a293"
+        },
+        "files": [
+          {
+            "name": "1.2.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.2/files/1.2.2.docx",
+            "bytes": 12660,
+            "sha256": "b05aecde69bc99d505bdd28417be9df19a55ab40b5f33c60b82efe1a57f69594",
+            "archivePath": "人工智能训练师三级上网素材/1.2.2plus/1.2.2.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.2.3",
+      "title": "智慧金融服务业务模块效果优化",
+      "sourcePages": [
+        39
+      ],
+      "firstExcludedRubricPage": 40,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.3/1.2.3.zip",
+          "bytes": 10062,
+          "sha256": "2d5b67f52f910c6f0d58b35f0907477e42cecad4f9d17ec5e67d7de347aaeb26"
+        },
+        "files": [
+          {
+            "name": "1.2.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.3/files/1.2.3.docx",
+            "bytes": 12669,
+            "sha256": "0ec34ab26efdd893721d131757fa074775ce3d27ca631ae3e7216d77554901ad",
+            "archivePath": "人工智能训练师三级上网素材/1.2.3plus/1.2.3.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.2.4",
+      "title": "智能卖点生成系统业务模块效果优化",
+      "sourcePages": [
+        43
+      ],
+      "firstExcludedRubricPage": 44,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.4/1.2.4.zip",
+          "bytes": 10080,
+          "sha256": "0a3ba2c8c918453ab46802b697cdbe3f075c86274b4933e1bbb253960da951cb"
+        },
+        "files": [
+          {
+            "name": "1.2.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.4/files/1.2.4.docx",
+            "bytes": 12676,
+            "sha256": "0a1781734c50f2fc54eee35f94245b73e25d6bc4b9be6f1061cb28db6420cd57",
+            "archivePath": "人工智能训练师三级上网素材/1.2.4plus/1.2.4.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1.2.5",
+      "title": "腾讯云智能数智人系统业务模块效果优化",
+      "sourcePages": [
+        47
+      ],
+      "firstExcludedRubricPage": 48,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.5/1.2.5.zip",
+          "bytes": 10084,
+          "sha256": "437a554f46e9c480663eabc83a5d7572fff233ac0c35846fe443e63dc54d50de"
+        },
+        "files": [
+          {
+            "name": "1.2.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/1.2.5/files/1.2.5.docx",
+            "bytes": 12684,
+            "sha256": "cf5911883601837de81340d5c044ac2a6053e761bc5849f3e2a702df87c6951d",
+            "archivePath": "人工智能训练师三级上网素材/1.2.5plus/1.2.5.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.1.1",
+      "title": "智慧交通中燃油效率模型的数据清洗和标注流程设计",
+      "sourcePages": [
+        53,
+        54
+      ],
+      "firstExcludedRubricPage": 55,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.1/2.1.1.zip",
+          "bytes": 19402,
+          "sha256": "bc8fa9ffe00a93238e0d34a5b0ad2c0ad01c85837a2ea89dcfca1fe030d6c5e6"
+        },
+        "files": [
+          {
+            "name": "2.1.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.1/files/2.1.1.docx",
+            "bytes": 14681,
+            "sha256": "91b98647dc3f19025b794f57484c8058c8d02ff6f9b9936b18ce4d9303f49515",
+            "archivePath": "人工智能训练师三级上网素材/2.1.1plus/2.1.1.docx"
+          },
+          {
+            "name": "2.1.1.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.1/files/2.1.1.ipynb",
+            "bytes": 2808,
+            "sha256": "c9de87137eeaa0ce7bedfca14722b1f251dc8b759a6a9d51efb94b72d30af60c",
+            "archivePath": "人工智能训练师三级上网素材/2.1.1plus/2.1.1.ipynb"
+          },
+          {
+            "name": "auto-mpg.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.1/files/auto-mpg.csv",
+            "bytes": 18108,
+            "sha256": "6fc0f7dcca8ffdae68e2592993e8dd8883e9e52627affdb7532f69e4b54a8ad4",
+            "archivePath": "人工智能训练师三级上网素材/2.1.1plus/auto-mpg.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.1.2",
+      "title": "低碳生活行为影响因素数据清洗和标注流程设计",
+      "sourcePages": [
+        59,
+        60
+      ],
+      "firstExcludedRubricPage": 61,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.2/2.1.2.zip",
+          "bytes": 61017,
+          "sha256": "acfa5743e0a6128f588726262c9b64892435bc8a103d3248e8f73c47751f74f8"
+        },
+        "files": [
+          {
+            "name": "2.1.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.2/files/2.1.2.docx",
+            "bytes": 14676,
+            "sha256": "c841ad8584405dcf6fbca0ecc25e9344215b220e560377f61cc7f27d6b32dccf",
+            "archivePath": "人工智能训练师三级上网素材/2.1.2plus/2.1.2.docx"
+          },
+          {
+            "name": "2.1.2.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.2/files/2.1.2.ipynb",
+            "bytes": 2280,
+            "sha256": "94369c7458f5ab484dccdae527c3ee1dde8a5b2da5c9a3d11134cd610beb710e",
+            "archivePath": "人工智能训练师三级上网素材/2.1.2plus/2.1.2.ipynb"
+          },
+          {
+            "name": "大学生低碳生活行为的影响因素数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.2/files/大学生低碳生活行为的影响因素数据集.xlsx",
+            "bytes": 63152,
+            "sha256": "aa3ccf118a49b8b5492b8701b374d8eb5afe516ae10d0a164c41371107120322",
+            "archivePath": "人工智能训练师三级上网素材/2.1.2plus/大学生低碳生活行为的影响因素数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.1.3",
+      "title": "信用评分模型数据清洗和标注流程设计",
+      "sourcePages": [
+        64,
+        65
+      ],
+      "firstExcludedRubricPage": 66,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.3/2.1.3.zip",
+          "bytes": 2598630,
+          "sha256": "9921fe4e64f074e7e1dbdc81882bc87dc2e00234e6d358667ad7584852c8eeac"
+        },
+        "files": [
+          {
+            "name": "2.1.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.3/files/2.1.3.docx",
+            "bytes": 14756,
+            "sha256": "8eb0e850245aee60fad132a53fcd5fe8548913847a94437185adf09f4ff00c0d",
+            "archivePath": "人工智能训练师三级上网素材/2.1.3plus/2.1.3.docx"
+          },
+          {
+            "name": "2.1.3.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.3/files/2.1.3.ipynb",
+            "bytes": 2816,
+            "sha256": "b392671419376f04b844eca4cb7b12df2b5e2c4782a926cff0ac22880c889dd0",
+            "archivePath": "人工智能训练师三级上网素材/2.1.3plus/2.1.3.ipynb"
+          },
+          {
+            "name": "finance数据集.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.3/files/finance数据集.csv",
+            "bytes": 7270450,
+            "sha256": "ffa9184a8ba53082c3d06f04b70e6f5322cc67433edd03035213280ab8acee57",
+            "archivePath": "人工智能训练师三级上网素材/2.1.3plus/finance数据集.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.1.4",
+      "title": "医疗研究数据清洗和标注设计",
+      "sourcePages": [
+        70,
+        71
+      ],
+      "firstExcludedRubricPage": 72,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.4/2.1.4.zip",
+          "bytes": 158699,
+          "sha256": "4f683dcf0558a13d15b006a118328e4504c4cf4cf0398a2b7856f8bd99cd93df"
+        },
+        "files": [
+          {
+            "name": "2.1.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.4/files/2.1.4.docx",
+            "bytes": 14762,
+            "sha256": "7e8b33aab97b71f48db5687360f33532bd33d81b8f654b8b5c8a0e64f8454910",
+            "archivePath": "人工智能训练师三级上网素材/2.1.4plus/2.1.4.docx"
+          },
+          {
+            "name": "2.1.4.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.4/files/2.1.4.ipynb",
+            "bytes": 3920,
+            "sha256": "a1f5ca33339444d962ffd00324e5789167204a0036e18db625f460dc24fbc56b",
+            "archivePath": "人工智能训练师三级上网素材/2.1.4plus/2.1.4.ipynb"
+          },
+          {
+            "name": "medical_data.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.4/files/medical_data.csv",
+            "bytes": 684258,
+            "sha256": "b2c3e63c379a0b5c7c6f8e01411616752f228c07141f525edaedea4f2e5f799d",
+            "archivePath": "人工智能训练师三级上网素材/2.1.4plus/medical_data.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.1.5",
+      "title": "健康与营养咨询数据预处理与数据规范设计",
+      "sourcePages": [
+        77,
+        78
+      ],
+      "firstExcludedRubricPage": 79,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.5/2.1.5.zip",
+          "bytes": 29150,
+          "sha256": "209e237abecf23ddb5efd71da432764414d21f39afd98b6b18bc42c053e9bb65"
+        },
+        "files": [
+          {
+            "name": "2.1.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.5/files/2.1.5.docx",
+            "bytes": 14770,
+            "sha256": "9c4058c77a14fad7264233a8655c34f301c282ea1db5fc19e8102ac06920379a",
+            "archivePath": "人工智能训练师三级上网素材/2.1.5plus/2.1.5.docx"
+          },
+          {
+            "name": "2.1.5.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.5/files/2.1.5.ipynb",
+            "bytes": 3264,
+            "sha256": "fb67f3ae3a327d40aac940931406ab8db1668cb824b832a5c07c9d56a5f03edd",
+            "archivePath": "人工智能训练师三级上网素材/2.1.5plus/2.1.5.ipynb"
+          },
+          {
+            "name": "健康咨询客户数据集.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.1.5/files/健康咨询客户数据集.csv",
+            "bytes": 149039,
+            "sha256": "c9efeb02a7aca45f1d17e99c4fbf72d2dc475bfef32b0a86083480a95e1e99d3",
+            "archivePath": "人工智能训练师三级上网素材/2.1.5plus/健康咨询客户数据集.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.2.1",
+      "title": "智能信用评分 Logistic 回归模型开发与测试",
+      "sourcePages": [
+        86,
+        87
+      ],
+      "firstExcludedRubricPage": 88,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.1/2.2.1.zip",
+          "bytes": 2637442,
+          "sha256": "af481031ecb5c8b3a8d7f475e511d41ceb0971802ae3006ed4df5a12e1323cfc"
+        },
+        "files": [
+          {
+            "name": "2.2.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.1/files/2.2.1.docx",
+            "bytes": 15031,
+            "sha256": "900c7d4b3c57958e5decf18cc479bb1e4b116fbaa693e35bddc644e12e6565f7",
+            "archivePath": "人工智能训练师三级上网素材/2.2.1plus/2.2.1.docx"
+          },
+          {
+            "name": "2.2.1.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.1/files/2.2.1.ipynb",
+            "bytes": 3032,
+            "sha256": "49895f3c20e222a0857f56587cd273aa12ec09810f6417a91ba684f7ce561811",
+            "archivePath": "人工智能训练师三级上网素材/2.2.1plus/2.2.1.ipynb"
+          },
+          {
+            "name": "finance数据集.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.1/files/finance数据集.csv",
+            "bytes": 7777795,
+            "sha256": "12aad75e1e14015d97b7b182f29ad7dde37190b56ff87a5f23b21b2912831cd3",
+            "archivePath": "人工智能训练师三级上网素材/2.2.1plus/finance数据集.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.2.2",
+      "title": "智慧交通中燃油效率随机森林模型开发与测试",
+      "sourcePages": [
+        92,
+        93
+      ],
+      "firstExcludedRubricPage": 94,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.2/2.2.2.zip",
+          "bytes": 19711,
+          "sha256": "26f0bd37430bbdeb295bd3679160643b037bbe0dc9b73965a51d0102eec9a604"
+        },
+        "files": [
+          {
+            "name": "2.2.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.2/files/2.2.2.docx",
+            "bytes": 14891,
+            "sha256": "cda432620506d38fe9183378f83e2bbdeb8cb393456615b333e7ee03b397064f",
+            "archivePath": "人工智能训练师三级上网素材/2.2.2plus/2.2.2.docx"
+          },
+          {
+            "name": "2.2.2.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.2/files/2.2.2.ipynb",
+            "bytes": 3490,
+            "sha256": "c4b6609a3acaba7416afa14f8986ecfbb7703ec6c622dea7078c6389c19b705a",
+            "archivePath": "人工智能训练师三级上网素材/2.2.2plus/2.2.2.ipynb"
+          },
+          {
+            "name": "auto-mpg.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.2/files/auto-mpg.csv",
+            "bytes": 18131,
+            "sha256": "09a282cf12c7ab4ffb517b496b0dd1a8bac6e95977178cc7832c32044c32c3f6",
+            "archivePath": "人工智能训练师三级上网素材/2.2.2plus/auto-mpg.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.2.3",
+      "title": "日常运动量随机森林预测模型开发与测试",
+      "sourcePages": [
+        98,
+        99
+      ],
+      "firstExcludedRubricPage": 100,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.3/2.2.3.zip",
+          "bytes": 29927,
+          "sha256": "623a3708378a78469789d8de9cacb5f679221ddf36eccfc8eb7ecc3eb66974a0"
+        },
+        "files": [
+          {
+            "name": "2.2.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.3/files/2.2.3.docx",
+            "bytes": 15068,
+            "sha256": "29c2815bea15084bc5ba44ec4a732c7e52ef58e8d03d4c6af76185ef7824ba0f",
+            "archivePath": "人工智能训练师三级上网素材/2.2.3plus/2.2.3.docx"
+          },
+          {
+            "name": "2.2.3.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.3/files/2.2.3.ipynb",
+            "bytes": 3963,
+            "sha256": "3ab437e15f270a3bf03e94b7f61491cdbe8e5d045342f0d3145ac644d1337111",
+            "archivePath": "人工智能训练师三级上网素材/2.2.3plus/2.2.3.ipynb"
+          },
+          {
+            "name": "fitness analysis.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.3/files/fitness analysis.csv",
+            "bytes": 166379,
+            "sha256": "82427ce1064ecb1777e371b122ff15a16c941a66ecc534fb4e9a9f6cce16dff4",
+            "archivePath": "人工智能训练师三级上网素材/2.2.3plus/fitness analysis.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.2.4",
+      "title": "低碳生活行为影响因素预测线性回归模型开发与测试",
+      "sourcePages": [
+        104,
+        105
+      ],
+      "firstExcludedRubricPage": 106,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.4/2.2.4.zip",
+          "bytes": 61097,
+          "sha256": "d2a736e1c01fcb3a67e68801a9d3cefbbc0497b9d58b1627918957b2357ffda9"
+        },
+        "files": [
+          {
+            "name": "2.2.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.4/files/2.2.4.docx",
+            "bytes": 14998,
+            "sha256": "da733b10dd64cf1f2f094ce9a07d59c6d87c1fd0b7bedd280cd3edce131c9347",
+            "archivePath": "人工智能训练师三级上网素材/2.2.4plus/2.2.4.docx"
+          },
+          {
+            "name": "2.2.4.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.4/files/2.2.4.ipynb",
+            "bytes": 3738,
+            "sha256": "c6190b604a24062662b6905d0cf6a80f82989415ec6a8ca1cec5c4f5eec9c59a",
+            "archivePath": "人工智能训练师三级上网素材/2.2.4plus/2.2.4.ipynb"
+          },
+          {
+            "name": "大学生低碳生活行为的影响因素数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.4/files/大学生低碳生活行为的影响因素数据集.xlsx",
+            "bytes": 57588,
+            "sha256": "c299518811916b0b80ffb90604417da59550bbf299d9309b740920ec3e2ebfac",
+            "archivePath": "人工智能训练师三级上网素材/2.2.4plus/大学生低碳生活行为的影响因素数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2.2.5",
+      "title": "智能步数预测模型开发与测试",
+      "sourcePages": [
+        110,
+        111
+      ],
+      "firstExcludedRubricPage": 112,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.5/2.2.5.zip",
+          "bytes": 31119,
+          "sha256": "6b7c3b4f1d7244bcf0552b90b339100c1cc10e4f458be3b43971c9fae6880a26"
+        },
+        "files": [
+          {
+            "name": "2.2.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.5/files/2.2.5.docx",
+            "bytes": 15019,
+            "sha256": "ad752a4a3d9758e3d3443193898e9df5b7fa9d6fc7e7b50bc9915000b79b5774",
+            "archivePath": "人工智能训练师三级上网素材/2.2.5plus/2.2.5.docx"
+          },
+          {
+            "name": "2.2.5.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.5/files/2.2.5.ipynb",
+            "bytes": 2495,
+            "sha256": "41b0e844c9e0784e721e99c8220e4be6fddfc446dabb1c15b959ec025450dd34",
+            "archivePath": "人工智能训练师三级上网素材/2.2.5plus/2.2.5.ipynb"
+          },
+          {
+            "name": "fitness analysis.csv",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/2.2.5/files/fitness analysis.csv",
+            "bytes": 149669,
+            "sha256": "d1b18b5115bc4ef833b6cc00c4bda1bf5223c65c1ec5f3ace0cc8900e00e28e3",
+            "archivePath": "人工智能训练师三级上网素材/2.2.5plus/fitness analysis.csv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.1.1",
+      "title": "智能音箱产品的数据分析与优化",
+      "sourcePages": [
+        120,
+        121
+      ],
+      "firstExcludedRubricPage": 122,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.1/3.1.1.zip",
+          "bytes": 54182,
+          "sha256": "13a3ba4560f675dd0e5cfeaa07e9721812613afebb08f96305414e410cfd6896"
+        },
+        "files": [
+          {
+            "name": "3.1.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.1/files/3.1.1.docx",
+            "bytes": 16627,
+            "sha256": "d5ac77f60065fda96283e205aa9e6993e958113de917bba46fd6db709def3d0f",
+            "archivePath": "人工智能训练师三级上网素材/3.1.1plus/3.1.1.docx"
+          },
+          {
+            "name": "智能音箱数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.1/files/智能音箱数据集.xlsx",
+            "bytes": 43121,
+            "sha256": "5b6b6d18f0c97d7064a6504a4d9e70dc97de9f64d9a8f8d0bd1e007f9e0b89c7",
+            "archivePath": "人工智能训练师三级上网素材/3.1.1plus/智能音箱数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.1.2",
+      "title": "智能照明系统的数据分析与优化",
+      "sourcePages": [
+        125,
+        126
+      ],
+      "firstExcludedRubricPage": 127,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.2/3.1.2.zip",
+          "bytes": 73352,
+          "sha256": "7ddf9b708a890e549c207892aaa2f3f7f44ef66dcbedff75d3b8d9ff6a4e244a"
+        },
+        "files": [
+          {
+            "name": "3.1.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.2/files/3.1.2.docx",
+            "bytes": 16795,
+            "sha256": "9375698bbf7edca6042119b88dadaddf1f26f03aba013e4432d8fca747fe7342",
+            "archivePath": "人工智能训练师三级上网素材/3.1.2plus/3.1.2.docx"
+          },
+          {
+            "name": "智能照明系统数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.2/files/智能照明系统数据集.xlsx",
+            "bytes": 61987,
+            "sha256": "133180d64a233a7b233a70a8d5ad49ad3ae535696384b6135808662b22a9c0dd",
+            "archivePath": "人工智能训练师三级上网素材/3.1.2plus/智能照明系统数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.1.3",
+      "title": "智能健康手环的数据分析与优化",
+      "sourcePages": [
+        130,
+        131
+      ],
+      "firstExcludedRubricPage": 132,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.3/3.1.3.zip",
+          "bytes": 487442,
+          "sha256": "dc0aa2e65b6284be1e8c938322f9d12215d367107f687d98bd9992472e4be61f"
+        },
+        "files": [
+          {
+            "name": "3.1.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.3/files/3.1.3.docx",
+            "bytes": 16952,
+            "sha256": "9f532356ea32c2d0b958dfbdf8414194a3da12bd3dcdafbf8b2dac9494ad0048",
+            "archivePath": "人工智能训练师三级上网素材/3.1.3plus/3.1.3.docx"
+          },
+          {
+            "name": "智能健康手环数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.3/files/智能健康手环数据集.xlsx",
+            "bytes": 493412,
+            "sha256": "a8d8b67f06f67233bbe45be433eea65d910de2428bf4c797aa04afa215700d43",
+            "archivePath": "人工智能训练师三级上网素材/3.1.3plus/智能健康手环数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.1.4",
+      "title": "智能健康监测系统的数据分析与优化",
+      "sourcePages": [
+        135,
+        136
+      ],
+      "firstExcludedRubricPage": 137,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.4/3.1.4.zip",
+          "bytes": 25525,
+          "sha256": "41df6f508dd745c04c3b6a557d2034447ff39c04a06adc1f13d1e790a6cb7cd1"
+        },
+        "files": [
+          {
+            "name": "3.1.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.4/files/3.1.4.docx",
+            "bytes": 16940,
+            "sha256": "c6e5296aba901f06c786d75c87a328ec6645e188e8584247ff853d0dfcf6344e",
+            "archivePath": "人工智能训练师三级上网素材/3.1.4plus/3.1.4.docx"
+          },
+          {
+            "name": "智能健康监测系统数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.4/files/智能健康监测系统数据集.xlsx",
+            "bytes": 14078,
+            "sha256": "083e573e2ad9f94427e33737911e7f03abdf3ae48a69dcea3043fa9d6319fbe0",
+            "archivePath": "人工智能训练师三级上网素材/3.1.4plus/智能健康监测系统数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.1.5",
+      "title": "智能家居环境控制系统的数据分析与优化",
+      "sourcePages": [
+        140,
+        141
+      ],
+      "firstExcludedRubricPage": 142,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.5/3.1.5.zip",
+          "bytes": 106390,
+          "sha256": "16bc11a8e7fe2e98739c4780c3936db481b27b2554e8efc7fe0c81590e3abe2a"
+        },
+        "files": [
+          {
+            "name": "3.1.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.5/files/3.1.5.docx",
+            "bytes": 16930,
+            "sha256": "e0411052105b475ce4b440d3138d3a60e6e0a4b8eac4a5f8750a8bcdb953e310",
+            "archivePath": "人工智能训练师三级上网素材/3.1.5plus/3.1.5.docx"
+          },
+          {
+            "name": "智能家居环境控制系统数据集.xlsx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.1.5/files/智能家居环境控制系统数据集.xlsx",
+            "bytes": 94405,
+            "sha256": "5d5ceac604b9cca3c3577a449d2e0d02d8cb0a2a210188626aaceb4f7c2b4cea",
+            "archivePath": "人工智能训练师三级上网素材/3.1.5plus/智能家居环境控制系统数据集.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2.1",
+      "title": "图像识别评估系统交互流程设计",
+      "sourcePages": [
+        145,
+        146
+      ],
+      "firstExcludedRubricPage": 147,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/3.2.1.zip",
+          "bytes": 95175083,
+          "sha256": "675b893dff2b28848ac2bf58a7f9802cbc17222e073f35c1e3db13f3d7ad2ebc"
+        },
+        "files": [
+          {
+            "name": "3.2.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/files/3.2.1.docx",
+            "bytes": 14594,
+            "sha256": "e3ac2b62921c2d2592b0740165d86aaefa3f7e87bbafb33e0157f226c25b2ab4",
+            "archivePath": "人工智能训练师三级上网素材/3.2.1plus/3.2.1.docx"
+          },
+          {
+            "name": "3.2.1.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/files/3.2.1.ipynb",
+            "bytes": 2831,
+            "sha256": "735fe70d5c98cd7f77f4ca600891453bf87d1e7aec6606d3d1d71e45effe1c1e",
+            "archivePath": "人工智能训练师三级上网素材/3.2.1plus/3.2.1.ipynb"
+          },
+          {
+            "name": "img_test.jpg",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/files/img_test.jpg",
+            "bytes": 150351,
+            "sha256": "d39697e9ee9f37371e13f50c33e6677275fe28e11839173d37ac98cf432d83d1",
+            "archivePath": "人工智能训练师三级上网素材/3.2.1plus/img_test.jpg"
+          },
+          {
+            "name": "labels.txt",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/files/labels.txt",
+            "bytes": 10472,
+            "sha256": "1f386e0d1cb6e28b9c2dac651c3dea6801e98ad1b41a14ce6bb1a093d72069f5",
+            "archivePath": "人工智能训练师三级上网素材/3.2.1plus/labels.txt"
+          },
+          {
+            "name": "resnet.onnx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.1/files/resnet.onnx",
+            "bytes": 102583340,
+            "sha256": "af16a04a6ec48ac494065d4439fe9dea590d337b9ca6dc328160ccf04a217b9c",
+            "archivePath": "人工智能训练师三级上网素材/3.2.1plus/resnet.onnx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2.2",
+      "title": "手写数字识别系统交互流程设计",
+      "sourcePages": [
+        150,
+        151
+      ],
+      "firstExcludedRubricPage": 152,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.2/3.2.2.zip",
+          "bytes": 51388,
+          "sha256": "0e130fd193fafb61319223d07dac5d5c97845ce6028007869d67cf54ff4560c2"
+        },
+        "files": [
+          {
+            "name": "3.2.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.2/files/3.2.2.docx",
+            "bytes": 14593,
+            "sha256": "077ba5fd6ce50dae13fc1ce2f5b47cfaf5bd7421bc738679458b6c5cde7c5fa2",
+            "archivePath": "人工智能训练师三级上网素材/3.2.2plus/3.2.2.docx"
+          },
+          {
+            "name": "3.2.2.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.2/files/3.2.2.ipynb",
+            "bytes": 1768,
+            "sha256": "0fbe1e7ca06dc3604268887020fec32e5e879e0fdc24210b2a83cd48a06497ee",
+            "archivePath": "人工智能训练师三级上网素材/3.2.2plus/3.2.2.ipynb"
+          },
+          {
+            "name": "img_test.png",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.2/files/img_test.png",
+            "bytes": 16753,
+            "sha256": "85dbd75a5b0c81491ddeae785cd208f4084b608bcd8b27deca87e3e6be473606",
+            "archivePath": "人工智能训练师三级上网素材/3.2.2plus/img_test.png"
+          },
+          {
+            "name": "mnist.onnx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.2/files/mnist.onnx",
+            "bytes": 26143,
+            "sha256": "5c688690f8bacf667d4c2074af5ad0646ca328d7ab03eccf944a65b320171bdd",
+            "archivePath": "人工智能训练师三级上网素材/3.2.2plus/mnist.onnx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2.3",
+      "title": "面部表情识别系统交互流程设计",
+      "sourcePages": [
+        154,
+        155
+      ],
+      "firstExcludedRubricPage": 156,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.3/3.2.3.zip",
+          "bytes": 32399501,
+          "sha256": "7e0381dcf6c2301863a11c2ecd9e422a3498dba53416d6cea9f23286a1800004"
+        },
+        "files": [
+          {
+            "name": "3.2.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.3/files/3.2.3.docx",
+            "bytes": 14606,
+            "sha256": "11c1896af32500a0bce9a152e6798e56930b01316673baa3f9d1a6f94ccb81e7",
+            "archivePath": "人工智能训练师三级上网素材/3.2.3plus/3.2.3.docx"
+          },
+          {
+            "name": "3.2.3.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.3/files/3.2.3.ipynb",
+            "bytes": 3173,
+            "sha256": "a04e0a3c31dbc8ef98285e60000f2b0332663a1f7c215f9c148fa51edfd0093f",
+            "archivePath": "人工智能训练师三级上网素材/3.2.3plus/3.2.3.ipynb"
+          },
+          {
+            "name": "emotion-ferplus.onnx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.3/files/emotion-ferplus.onnx",
+            "bytes": 35040571,
+            "sha256": "a2a2ba6a335a3b29c21acb6272f962bd3d47f84952aaffa03b60986e04efa61c",
+            "archivePath": "人工智能训练师三级上网素材/3.2.3plus/emotion-ferplus.onnx"
+          },
+          {
+            "name": "img_test.png",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.3/files/img_test.png",
+            "bytes": 17697,
+            "sha256": "7e688ab62e96522f26d84cc0178621794c5f2f705e6a323ded11f3f668a6e124",
+            "archivePath": "人工智能训练师三级上网素材/3.2.3plus/img_test.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2.4",
+      "title": "花朵智能识别系统交互流程设计",
+      "sourcePages": [
+        159,
+        160
+      ],
+      "firstExcludedRubricPage": 161,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/3.2.4.zip",
+          "bytes": 95125832,
+          "sha256": "fe8611112b842113895d3cb06b006f7bf8bbe299154db83e0ceeee6fc234c2ab"
+        },
+        "files": [
+          {
+            "name": "3.2.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/files/3.2.4.docx",
+            "bytes": 14608,
+            "sha256": "fb715b1b3ed963d0a3bec49e4cb6d0738087891c515287d08ad6397d69396512",
+            "archivePath": "人工智能训练师三级上网素材/3.2.4plus/3.2.4.docx"
+          },
+          {
+            "name": "3.2.4.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/files/3.2.4.ipynb",
+            "bytes": 2957,
+            "sha256": "9ebcc32ad169ad1d6526c139b8932273b70684087d6b24b6ec98f613acaeffa6",
+            "archivePath": "人工智能训练师三级上网素材/3.2.4plus/3.2.4.ipynb"
+          },
+          {
+            "name": "flower-detection.onnx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/files/flower-detection.onnx",
+            "bytes": 102583340,
+            "sha256": "af16a04a6ec48ac494065d4439fe9dea590d337b9ca6dc328160ccf04a217b9c",
+            "archivePath": "人工智能训练师三级上网素材/3.2.4plus/flower-detection.onnx"
+          },
+          {
+            "name": "flower_test.png",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/files/flower_test.png",
+            "bytes": 100699,
+            "sha256": "0fa1f4d5aad2121e4f4bc74a7f38d290f3094eeb1082d4daae1daa65b4b0cdf5",
+            "archivePath": "人工智能训练师三级上网素材/3.2.4plus/flower_test.png"
+          },
+          {
+            "name": "labels.txt",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.4/files/labels.txt",
+            "bytes": 10472,
+            "sha256": "1f386e0d1cb6e28b9c2dac651c3dea6801e98ad1b41a14ce6bb1a093d72069f5",
+            "archivePath": "人工智能训练师三级上网素材/3.2.4plus/labels.txt"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2.5",
+      "title": "人脸 AI 智能检测系统交互流程设计",
+      "sourcePages": [
+        164,
+        165
+      ],
+      "firstExcludedRubricPage": 166,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/3.2.5.zip",
+          "bytes": 1117008,
+          "sha256": "4f53590c34cadab2e6a45c01d6736055721a3b84a3eb263c8c04a429352c9784"
+        },
+        "files": [
+          {
+            "name": "3.2.5.ipynb",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/files/3.2.5.ipynb",
+            "bytes": 6643,
+            "sha256": "df8974b126c2e9238a506c4eb14db7486750f07949f0dfb923d701fafc7695a2",
+            "archivePath": "人工智能训练师三级上网素材/3.2.5plus/3.2.5.ipynb"
+          },
+          {
+            "name": "imgs/1.jpg",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/files/imgs/1.jpg",
+            "bytes": 49124,
+            "sha256": "929d79fd5ac4dea69fd5bc4bd5dab0199f19d06fa84e5649b69c3d5c481c52c9",
+            "archivePath": "人工智能训练师三级上网素材/3.2.5plus/imgs/1.jpg"
+          },
+          {
+            "name": "version-RFB-320.onnx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/files/version-RFB-320.onnx",
+            "bytes": 1270727,
+            "sha256": "34cd7e60aeff28744c657de7a3dc64e872d506741de66987f3426f2b79f88017",
+            "archivePath": "人工智能训练师三级上网素材/3.2.5plus/version-RFB-320.onnx"
+          },
+          {
+            "name": "vision/utils/box_utils_numpy.py",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/files/vision/utils/box_utils_numpy.py",
+            "bytes": 4509,
+            "sha256": "2b23965cd99e9e462e5ce3d52a86e816c17006514edba7ade11fb29688247aab",
+            "archivePath": "人工智能训练师三级上网素材/3.2.5plus/vision/utils/box_utils_numpy.py"
+          },
+          {
+            "name": "voc-model-labels.txt",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/3.2.5/files/voc-model-labels.txt",
+            "bytes": 15,
+            "sha256": "42f22f006e845cedefcbbbc76399d00a83a27831cb17a7b3fafcb9c60c814cd6",
+            "archivePath": "人工智能训练师三级上网素材/3.2.5plus/voc-model-labels.txt"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.1.1",
+      "title": "Label studio 培训大纲编写",
+      "sourcePages": [
+        173
+      ],
+      "firstExcludedRubricPage": 174,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.1/4.1.1.zip",
+          "bytes": 13698,
+          "sha256": "25fe90ac35efae67e86736f0a3bd6038e5133577e0d69573960c2aee6680ca51"
+        },
+        "files": [
+          {
+            "name": "4.1.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.1/files/4.1.1.docx",
+            "bytes": 16470,
+            "sha256": "0d4e9596603f9a20bbc962fc067626e1a99edb2ccf59d79ce15d4c7aa2dcc65e",
+            "archivePath": "人工智能训练师三级上网素材/4.1.1plus/4.1.1.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.1.2",
+      "title": "爬虫培训大纲编写",
+      "sourcePages": [
+        177
+      ],
+      "firstExcludedRubricPage": 178,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.2/4.1.2.zip",
+          "bytes": 14086,
+          "sha256": "5b32e327eab4c65ea64df66d6ebbe76787c29a15b8f0e1f61e5b3b48bc09a69f"
+        },
+        "files": [
+          {
+            "name": "4.1.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.2/files/4.1.2.docx",
+            "bytes": 16858,
+            "sha256": "72c65d21ac3e1c5fdf3cb7e92beb1966eec6ad98662f371ad0ab7e10adf35a0f",
+            "archivePath": "人工智能训练师三级上网素材/4.1.2plus/4.1.2.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.1.3",
+      "title": "数据清洗培训大纲编写",
+      "sourcePages": [
+        181
+      ],
+      "firstExcludedRubricPage": 182,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.3/4.1.3.zip",
+          "bytes": 13178,
+          "sha256": "6f43e86795eeaefc3642b79c35e7347bb3a8d0d14a779a979fe8c1de775c5646"
+        },
+        "files": [
+          {
+            "name": "4.1.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.3/files/4.1.3.docx",
+            "bytes": 15950,
+            "sha256": "2288ca03b7ec6d5e34c2eb2d3e914bbc807ef18b770f04fa41621a20bb8dc49c",
+            "archivePath": "人工智能训练师三级上网素材/4.1.3plus/4.1.3.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.1.4",
+      "title": "Pandas 数据清洗培训大纲编写",
+      "sourcePages": [
+        185
+      ],
+      "firstExcludedRubricPage": 186,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.4/4.1.4.zip",
+          "bytes": 13451,
+          "sha256": "b2b540ad644b09c69f583c620f804a03da5c266be181f832d52a8aebc624adad"
+        },
+        "files": [
+          {
+            "name": "4.1.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.4/files/4.1.4.docx",
+            "bytes": 16213,
+            "sha256": "d2f0c5b5f5254ee566d15a4af3b23311fdb6185341fefc1395b1f14e3707f68d",
+            "archivePath": "人工智能训练师三级上网素材/4.1.4plus/4.1.4.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.1.5",
+      "title": "Python 数据可视化培训大纲编写",
+      "sourcePages": [
+        189
+      ],
+      "firstExcludedRubricPage": 190,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.5/4.1.5.zip",
+          "bytes": 13472,
+          "sha256": "ab1f55b66fb9476a856982bfcdb43563f68d9e5e7070ad7c4ad29581cd7ac051"
+        },
+        "files": [
+          {
+            "name": "4.1.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.1.5/files/4.1.5.docx",
+            "bytes": 16246,
+            "sha256": "eeb013ac9f1fc8556a5b4f637e9a65078326597383b82d74f76c209b4c3cdd3e",
+            "archivePath": "人工智能训练师三级上网素材/4.1.5plus/4.1.5.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.2.1",
+      "title": "智能零售分析系统数据采集和处理指导",
+      "sourcePages": [
+        193,
+        194
+      ],
+      "firstExcludedRubricPage": 195,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.1/4.2.1.zip",
+          "bytes": 15946,
+          "sha256": "aef911434fc1fdf961ffdbd788a7b195252cb36743db0fa6fe7680b1f1c406df"
+        },
+        "files": [
+          {
+            "name": "4.2.1.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.1/files/4.2.1.docx",
+            "bytes": 21485,
+            "sha256": "f82853705af3ec0fd93a863ef2b4c813865b785d5f652821055425e8c8ba3ba5",
+            "archivePath": "人工智能训练师三级上网素材/4.2.1plus/4.2.1.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.2.2",
+      "title": "AI 辅助的医疗影像诊断系统数据采集和处理指导",
+      "sourcePages": [
+        198,
+        199
+      ],
+      "firstExcludedRubricPage": 200,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.2/4.2.2.zip",
+          "bytes": 15722,
+          "sha256": "6ecc980b8c22858a5af049f18406aa8b11cd01e0e8d8a21782fefa86a109a82c"
+        },
+        "files": [
+          {
+            "name": "4.2.2.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.2/files/4.2.2.docx",
+            "bytes": 21287,
+            "sha256": "6172fd21e65cd9082e0de1823e1c11c5eb5eabe6cbee66289da14040ea227b05",
+            "archivePath": "人工智能训练师三级上网素材/4.2.2plus/4.2.2.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.2.3",
+      "title": "AI 智能安防监控系统采集和处理指导",
+      "sourcePages": [
+        202,
+        203
+      ],
+      "firstExcludedRubricPage": 204,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.3/4.2.3.zip",
+          "bytes": 15491,
+          "sha256": "cf19759da2c2e15db6ba05d470c4ee91a581912a0f98a5252d28ebd6f0586866"
+        },
+        "files": [
+          {
+            "name": "4.2.3.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.3/files/4.2.3.docx",
+            "bytes": 21031,
+            "sha256": "cd77b7c0eb0a812fdebdf7007d3a9072e4ef6b7c91f5f79c3fde85e9d1eb38ac",
+            "archivePath": "人工智能训练师三级上网素材/4.2.3plus/4.2.3.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.2.4",
+      "title": "自动驾驶汽车感知系统数据采集与标注指导",
+      "sourcePages": [
+        206,
+        207
+      ],
+      "firstExcludedRubricPage": 208,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.4/4.2.4.zip",
+          "bytes": 15305,
+          "sha256": "62c5d44c8c71490f784ce03745f844807b8995547b28f80f5fd3f97a429da750"
+        },
+        "files": [
+          {
+            "name": "4.2.4.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.4/files/4.2.4.docx",
+            "bytes": 20854,
+            "sha256": "b75e12ccfd0aba08b6f56ff37653a455267f7ac59e6c48332b18190e093a9745",
+            "archivePath": "人工智能训练师三级上网素材/4.2.4plus/4.2.4.docx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4.2.5",
+      "title": "智能化数据标注在文化遗产数字化保护中的应用指导",
+      "sourcePages": [
+        210,
+        211
+      ],
+      "firstExcludedRubricPage": 212,
+      "materials": {
+        "zip": {
+          "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.5/4.2.5.zip",
+          "bytes": 16223,
+          "sha256": "336521dd15f61aebf142ee71155ac07f52eeaa7fa518eca55218713896d0b364"
+        },
+        "files": [
+          {
+            "name": "4.2.5.docx",
+            "key": "practical/2026-11-08-original-f6059995-5cc00737/4.2.5/files/4.2.5.docx",
+            "bytes": 21780,
+            "sha256": "da9f9186efbfa8eaeb684e939c544e6b5c7fdc3ea840333cd9e44158801baa4b",
+            "archivePath": "人工智能训练师三级上网素材/4.2.5plus/4.2.5.docx"
+          }
+        ]
+      }
+    }
+  ]
+}

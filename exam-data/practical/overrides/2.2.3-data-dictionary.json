@@ -1,0 +1,21 @@
+{
+  "type": "table",
+  "columns": ["变量名", "描述", "类型"],
+  "rows": [
+    ["Timestamp", "记录条目时间", "datetime"],
+    ["Your name", "参与者姓名", "string"],
+    ["Your gender", "参与者性别", "string"],
+    ["Your age", "参与者年龄", "string"],
+    ["How important is exercise to you?", "锻炼对你的重要性", "integer"],
+    ["How do you describe your current level of fitness?", "描述你目前的健康水平", "string"],
+    ["How often do you exercise?", "你多久锻炼一次", "string"],
+    ["Barriers to exercise", "阻碍你定期锻炼的障碍（如时间不足、动力不足等）", "string"],
+    ["Forms of exercise", "目前参与的锻炼形式（如跑步、游泳等）", "string"],
+    ["Factors affecting fitness", "影响健康的因素（如对快餐的易得性、诱惑等）", "string"],
+    ["How healthy do you consider yourself?", "你认为自己有多健康", "integer"],
+    ["Recommended fitness routine to friends?", "你是否曾推荐朋友遵循健身计划", "string"],
+    ["Purchased fitness equipment?", "你是否曾购买过健身设备", "string"],
+    ["Motivations to exercise", "激励你锻炼的因素（如为了健康、减肥等）", "string"]
+  ],
+  "note": "原 PDF 中为图片，人工转录。数据行 14 行，加上表头共 15 行。"
+}

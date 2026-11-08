@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aigraph.wanghuanlab.com/exam/practical-questions.schema.json",
+  "title": "Practical exam question bank",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bankVersion", "groups", "questions"],
+  "properties": {
+    "bankVersion": { "type": "string", "minLength": 1 },
+    "groups": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/group" }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 40,
+      "maxItems": 40,
+      "items": { "$ref": "#/$defs/question" }
+    }
+  },
+  "$defs": {
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "points"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[1-4]\\.[12]$" },
+        "title": { "type": "string", "minLength": 1 },
+        "points": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "groupId", "title", "durationMinutes", "points", "source", "content", "answerSections", "materials"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[1-4]\\.[12]\\.[1-5]$" },
+        "groupId": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "durationMinutes": { "type": "integer", "minimum": 1 },
+        "points": { "type": "integer", "minimum": 1 },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pdf", "pages"],
+          "properties": {
+            "pdf": { "type": "string", "minLength": 1 },
+            "pages": { "type": "array", "minItems": 1, "items": { "type": "integer", "minimum": 1 } }
+          }
+        },
+        "content": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } },
+        "answerSections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } },
+        "materials": { "$ref": "#/$defs/materials" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["heading", "paragraph", "list", "options", "table", "note"] },
+        "hidden": { "type": "boolean" }
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "heading" } } }, "then": { "$ref": "#/$defs/heading" } },
+        { "if": { "properties": { "type": { "const": "paragraph" } } }, "then": { "$ref": "#/$defs/textBlock" } },
+        { "if": { "properties": { "type": { "const": "note" } } }, "then": { "$ref": "#/$defs/textBlock" } },
+        { "if": { "properties": { "type": { "const": "list" } } }, "then": { "$ref": "#/$defs/list" } },
+        { "if": { "properties": { "type": { "const": "options" } } }, "then": { "$ref": "#/$defs/options" } },
+        { "if": { "properties": { "type": { "const": "table" } } }, "then": { "$ref": "#/$defs/table" } }
+      ]
+    },
+    "heading": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "level", "text"],
+      "properties": {
+        "type": { "const": "heading" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "text": { "type": "string", "minLength": 1 },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "textBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "enum": ["paragraph", "note"] },
+        "text": { "type": "string", "minLength": 1 },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "style", "items"],
+      "properties": {
+        "type": { "const": "list" },
+        "style": { "enum": ["paren-number", "number", "step", "bullet"] },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["marker", "blocks"],
+            "properties": {
+              "marker": { "type": "string", "minLength": 1 },
+              "blocks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } }
+            }
+          }
+        },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "stem", "choices"],
+      "properties": {
+        "type": { "const": "options" },
+        "stem": { "type": "string", "minLength": 1 },
+        "choices": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "columns", "rows"],
+      "properties": {
+        "type": { "const": "table" },
+        "columns": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "rows": { "type": "array", "minItems": 1, "items": { "type": "array", "items": { "type": "string" } } },
+        "note": { "type": "string" },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "fields"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "fields": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/field" } }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label", "required"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["text", "file"] },
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "placeholder": { "type": "string" },
+        "accept": { "type": "string" },
+        "expectedNames": { "type": "array", "items": { "type": "string" } },
+        "multiple": { "type": "boolean" },
+        "required": { "type": "boolean" }
+      }
+    },
+    "fileRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "bytes", "sha256"],
+      "properties": {
+        "name": { "type": "string" },
+        "key": { "type": "string", "pattern": "^practical/" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "archivePath": { "type": "string" }
+      }
+    },
+    "materials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zip", "files"],
+      "properties": {
+        "zip": { "$ref": "#/$defs/fileRecord" },
+        "files": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fileRecord" } }
+      }
+    }
+  }
+}
