@@ -1,8 +1,7 @@
-# Local course / notebook material (not part of the public app)
-demo/
-docs/
-lesson/
-python-base/
+# Local course material and machine-specific agent caches. Not part of the app.
+local/
+.archify/
+.claude/
 
 # Dependencies
 node_modules/
@@ -11,6 +10,7 @@ node_modules/
 bower_components/
 
 # Build / cache
+backend/target/
 dist/
 dist-ssr/
 build/
@@ -91,3 +91,6 @@ output/playwright/
 .playwright-cli/
 test-results/
 playwright-report/
+
+# Local account database. Created on first login; not part of the public source.
+data/

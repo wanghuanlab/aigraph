@@ -24,9 +24,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from exam_content import clean_page_lines, comparable_text, _compact  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "exam-data/practical"
+DATA = ROOT / "database/seed/practical"
 ASSETS = ROOT / "exam-assets"
-SOURCES = ROOT / "docs/人工智能训练师题库和素材"
+SOURCES = ROOT / "local/course-docs/人工智能训练师题库和素材"
 
 
 def digest(data: bytes) -> str:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build structured practical questions and the TOS-shaped material directory.
 
-Requires Python 3, pypdfium2 and bsdtar. Source documents stay in docs/.
-Question text is written to exam-data/; downloadable files go to exam-assets/,
+Requires Python 3, pypdfium2 and bsdtar. Source documents stay in local/course-docs/.
+Question text is written to database/seed/; downloadable files go to exam-assets/,
 which is gitignored and matches the object keys used on TOS.
 """
 
@@ -27,10 +27,10 @@ from exam_content import (  # noqa: E402
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "docs/人工智能训练师题库和素材"
+SOURCE = ROOT / "local/course-docs/人工智能训练师题库和素材"
 PDF = SOURCE / "3.2-人工智能训练师_3级_操作技能复习题.pdf"
 RAR = SOURCE / "人工智能训练师三级上网素材.rar"
-DATA = ROOT / "exam-data/practical"
+DATA = ROOT / "database/seed/practical"
 ASSETS = ROOT / "exam-assets"
 OVERRIDES = DATA / "overrides"
 ARCHIVE_ROOT = "人工智能训练师三级上网素材"
@@ -250,7 +250,7 @@ def question_content(pdf, pages: list[int], question_id: str) -> tuple[list[dict
         content, inserted = insert_table_after(content, "详细说明如下：", table)
         if not inserted:
             raise SystemExit("2.2.3 数据字典没有找到插入位置“详细说明如下：”")
-        print("  override: exam-data/practical/overrides/2.2.3-data-dictionary.json", flush=True)
+        print("  override: database/seed/practical/overrides/2.2.3-data-dictionary.json", flush=True)
     actual = comparable_text(content)
     expected = _compact("".join(expected_parts))
     if actual != expected:
@@ -287,7 +287,7 @@ def main() -> None:
     }
     asset_manifest = {"bankVersion": version, "files": []}
     questions = []
-    used_overrides = ["exam-data/practical/overrides/2.2.3-data-dictionary.json"]
+    used_overrides = ["database/seed/practical/overrides/2.2.3-data-dictionary.json"]
     pdf = pdfium.PdfDocument(PDF)
     with tempfile.TemporaryDirectory(prefix="aigraph-exam-source-") as temp:
         members = subprocess.check_output(["bsdtar", "-tf", str(RAR)], text=True).splitlines()
@@ -308,7 +308,7 @@ def main() -> None:
             pages = list(range(first, rubric))
             content, _expected = question_content(pdf, pages, question_id)
             if (OVERRIDES / f"{question_id}.json").exists():
-                used_overrides.append(f"exam-data/practical/overrides/{question_id}.json")
+                used_overrides.append(f"database/seed/practical/overrides/{question_id}.json")
             material_dir = material_root / f"{question_id}plus"
             assert material_dir.is_dir(), question_id
             files = sorted(path for path in material_dir.rglob("*") if path.is_file()

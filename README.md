@@ -1,60 +1,52 @@
 # AIGraph
 
-人工智能全栈知识图谱与实战研习社。站点：[aigraph.wanghuanlab.com](https://aigraph.wanghuanlab.com)
+人工智能训练师（三级）理论考试和操作技能考场。站点：[aigraph.wanghuanlab.com](https://aigraph.wanghuanlab.com)
 
-以 AI 知识图谱串联技术栈学习：从语言基础、数据处理，到机器学习、深度学习与工程落地。实操项目、API 手册与互动自测是当前开放支线上的学习方式，不是整站定位。
+主线是理论、操作两部分的练习和模拟考试。按题整理的作答笔记在「学习资料」。
 
-## 当前进度
-
-目前开放的是 **Python 语言 → 人工智能训练师 → 三级** 这一小段，包含知识图谱、实操项目、API 手册、互动自测，以及考试中心的实操练习和模拟考试。理论考试、AI 评分和错题本尚未开放。机器学习、深度学习 / 大模型等模块仍在规划中。
-
-## 功能
-
-- **知识图谱**：按技术栈梳理可检索的知识点与技能树
-- **实操项目**：当前支线收录 Python 下人工智能训练师三级的实操题目
-- **API 手册**：本支高频接口与代码模板
-- **互动自测**：针对当前支线的填空与易错点练习
-
-## 技术栈
-
-- React 18 + TypeScript
-- Vite 6
-- Tailwind CSS
+```text
+frontend/     Vue 3 页面
+backend/      Spring Boot 3 + JPA
+database/     建表脚本和题库种子
+docs/         需求、架构、接口、决策
+scripts/      题库素材生成与校验
+tests/        跨模块测试
+.agents/      给代理的改代码约定
+```
 
 ## 本地运行
 
 ```bash
-npm install
+npm run dev:api
 npm run dev
 ```
 
-生产构建：
+接口在 `127.0.0.1:8080`，页面在 `http://127.0.0.1:5173/`。数据库连接写在根目录 `.env` 的 `MYSQL_*`，样例见 `.env.example`。
+
+`docker compose up` 会在本机 3306 端口另起一套空库，并执行 `database/schema.sql`。它不使用 `.env` 里的远程地址。空题库会在后端启动时分别从 `database/seed/practical/questions.json` 和 `database/seed/theory/questions.json` 导入。
+
+前端构建：
 
 ```bash
 npm run build
-npm run preview
 ```
 
-## 仓库说明
+产物在 `frontend/dist/`。
 
-公开仓库只包含站点源码（`src/`）及构建配置。本地讲义、Notebook、练习目录和实操考试素材不纳入版本库。
+## 账号
 
-实操题面在 `exam-data/practical/questions.json`。下载素材由 `python3 scripts/prepare-exam-assets.py` 生成到 `exam-assets/`，目录结构与对象存储路径一致，不进入 git。本地开发时 Vite 会提供 `/exam-assets`；上线前把 `VITE_EXAM_ASSET_BASE_URL` 指到素材所在的域名，见 `.env.example`。
+密码只存 scrypt 散列。注册和登录需要验证码。管理员用户名是 `admin`。后台只显示汇总，不显示密码和答卷正文。阅卷用 OpenAI 兼容接口，密钥只留在服务器上，页面显示末四位。
+
+上传文件留在当前浏览器。文字答案和分数记在账号里。
+
+## 页面
+
+- `/` 考场
+- `/workspace/:id` 作答
+- `/materials` 学习资料：按题号整理的作答笔记
+- `/account` 登录和答卷
+- `/admin` 后台
 
 ## License
 
 MIT
-
-## 站点导航与内容扩展
-
-- 首页展示全站定位、领域图谱与当前开放的研习专题；Python 三级是其中一条部分收录的支线。
-- 学习资源库从现有知识点、实操项目、API 与避坑数据自动生成检索目录。新增对应数据条目会同步进入目录与首页统计。
-- 文章与专题手册目前展示规划状态，不计入已收录资源。
-- 页面位置使用 URL hash 保存，支持刷新和浏览器前进、后退。例如 `#module=python&tab=cheatsheet`。
-- 页面布局和响应式样式位于 `src/index.css`；首页、资源库分别位于 `src/pages/Home.tsx` 和 `src/pages/Resources.tsx`。
-
-### 阅读风格与学习交互
-
-- 顶栏提供浅色、深色和跟随系统三种风格；偏好保存在本机浏览器，刷新后保留。共享颜色使用 `src/index.css` 中的语义变量。
-- API 速查默认展示用途与常用写法，点击函数展开示例和注意事项。
-- 实操项目按“理解任务 → 动手练习 → 查看解析 → 复习要点”组织；数据字典、依赖和提交要求按需展开。练习默认显示填空模板，代码支持复制和自动换行。

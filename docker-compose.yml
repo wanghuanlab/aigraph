@@ -1,0 +1,20 @@
+# Local MySQL for a fresh checkout. The running site uses the database named in .env
+# (currently the server on port 11306). This file does not connect to that server.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: aigraph-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: aigraph
+      MYSQL_USER: aigraph
+      MYSQL_PASSWORD: ${LOCAL_MYSQL_PASSWORD:-aigraph}
+      MYSQL_ROOT_PASSWORD: ${LOCAL_MYSQL_ROOT_PASSWORD:-aigraph-root}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - aigraph-mysql:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+
+volumes:
+  aigraph-mysql:

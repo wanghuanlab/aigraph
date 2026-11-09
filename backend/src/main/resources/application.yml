@@ -1,0 +1,23 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+  tomcat:
+    max-http-form-post-size: 8MB
+
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:aigraph}?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC
+    username: ${MYSQL_USER:aigraph}
+    password: ${MYSQL_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
+  jackson:
+    default-property-inclusion: non_null
+
+aigraph:
+  cookie-name: aigraph_session
+  session-millis: 1209600000
