@@ -7,5 +7,5 @@ const route = useRoute();
 
 <template>
   <SiteHeader v-if="route.name !== 'workspace' && route.name !== 'theory'" />
-  <router-view />
+  <router-view :key="route.path" />
 </template>

@@ -1,343 +1,330 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { api, type TheoryQuestion } from '../api';
+import { refreshAuth } from '../auth';
+import AnswerSheet from '../components/AnswerSheet.vue';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
+import EmptyState from '../components/EmptyState.vue';
+import ExamTopBar from '../components/ExamTopBar.vue';
+import LoadingBlock from '../components/LoadingBlock.vue';
+import SaveIndicator from '../components/SaveIndicator.vue';
+import StatusTag from '../components/StatusTag.vue';
+import UiButton from '../components/UiButton.vue';
+import { canUseExamShortcut, examName, isLoginError } from '../exam/presentation';
 import { choicesOf, readTheory, rememberTheory, sessionFromRecord, toExamPayload, type TheorySession } from '../exam/theory';
+import { useExamSave } from '../exam/useExamSave';
 
 const route = useRoute();
-const router = useRouter();
 const session = ref<TheorySession | null>(null);
 const questions = ref<Record<string, TheoryQuestion>>({});
 const index = ref(0);
 const now = ref(Date.now());
+const loadError = ref('');
 const error = ref('');
 const notice = ref('');
-const busy = ref(false);
+const checking = ref(false);
+const submitting = ref(false);
+const grading = ref(false);
+const confirming = ref(false);
+const sheetOpen = ref(false);
 const reveal = ref<Record<string, { correct: boolean; answer: string[] }>>({});
 const openKinds = ref<Record<string, boolean>>({ judge: true, single: false, multi: false });
-let clock: number | undefined;
-let saveTimer: number | undefined;
+const body = ref<HTMLElement>();
+const paperPane = ref<HTMLElement>();
+const title = ref<HTMLElement>();
+let clock: number;
+let autoAttempted = false;
 
+const { status, savedAt, error: saveError, schedule, flush, resume } = useExamSave(() => session.value ? toExamPayload(session.value) : undefined);
+const kinds = { judge: '判断题', single: '单选题', multi: '多选题' };
 const paper = computed(() => (session.value?.questionIds || []).map((id) => questions.value[id]).filter((item): item is TheoryQuestion => Boolean(item)));
-const current = computed(() => paper.value[index.value] || null);
-const groups = computed(() => (['judge', 'single', 'multi'] as const).map((kind) => ({
-  kind,
-  title: kind === 'judge' ? '判断题' : kind === 'single' ? '单选题' : '多选题',
-  items: paper.value.map((item, position) => ({ item, position })).filter((entry) => entry.item.kind === kind),
+const current = computed(() => paper.value[index.value]);
+const remaining = computed(() => session.value?.deadlineAt === undefined ? undefined : Math.max(0, session.value.deadlineAt - now.value));
+const locked = computed(() => session.value?.status === 'submitted');
+const expired = computed(() => !locked.value && remaining.value === 0);
+const readOnly = computed(() => locked.value || submitting.value || expired.value);
+const markedCount = computed(() => session.value?.markedQuestionIds.length ?? 0);
+const answeredCount = computed(() => paper.value.filter((item) => selected(item.id).length).length);
+const groups = computed(() => (Object.keys(kinds) as TheoryQuestion['kind'][]).map((kind) => ({
+  id: kind,
+  title: kinds[kind],
+  open: openKinds.value[kind],
+  items: paper.value.filter((item) => item.kind === kind).map((item, i) => ({
+    id: item.id, label: String(i + 1), current: current.value?.id === item.id,
+    state: selected(item.id).length ? 'complete' as const : 'empty' as const,
+    marked: session.value?.markedQuestionIds.includes(item.id),
+  })),
 })));
-const ordinal = computed(() => {
-  const question = current.value;
-  if (!question) return 1;
-  return paper.value.filter((item) => item.kind === question.kind).findIndex((item) => item.id === question.id) + 1;
+const ordinal = computed(() => groups.value.find((group) => group.id === current.value?.kind)?.items.find((item) => item.current)?.label);
+const verdict = computed(() => {
+  const id = current.value?.id;
+  if (!id) return;
+  const item = session.value?.assessment?.items.find((entry) => entry.questionId === id);
+  return item?.answer ? { correct: Boolean(item.correct), answer: item.answer } : reveal.value[id];
 });
-const answeredCount = computed(() => paper.value.filter((item) => (session.value?.answers[item.id] || []).length).length);
-const markedCount = computed(() => session.value?.markedQuestionIds.length || 0);
-const remainingText = computed(() => formatClock(Math.max(0, (session.value?.deadlineAt || now.value) - now.value)));
-const verdicts = computed(() => {
-  const map: Record<string, { correct: boolean; answer: string[] }> = { ...reveal.value };
-  for (const item of session.value?.assessment?.items || []) {
-    if (item.answer) map[item.questionId] = { correct: Boolean(item.correct), answer: item.answer };
-  }
-  return map;
-});
+const loginTarget = computed(() => ({ name: 'account', query: { next: route.fullPath } }));
 
-onMounted(async () => {
-  clock = window.setInterval(() => {
-    now.value = Date.now();
-    if (session.value?.status === 'active' && session.value.deadlineAt && now.value >= session.value.deadlineAt) {
-      void submit('timeout');
-    }
-  }, 1000);
+async function load() {
+  loadError.value = '';
   try {
-    const bank = await api.theoryBank();
-    questions.value = Object.fromEntries(bank.bank.questions.map((item) => [item.id, item]));
-    const id = String(route.params.id || '');
-    session.value = readTheory(id);
-    if (!session.value) {
-      const record = await api.learning();
-      const stored = record.record.exams?.[id];
-      session.value = stored ? sessionFromRecord(stored) : null;
-      if (session.value) rememberTheory(session.value);
+    const { bank } = await api.theoryBank();
+    questions.value = Object.fromEntries(bank.questions.map((item) => [item.id, item]));
+    const id = String(route.params.id);
+    let exam = readTheory(id);
+    if (!exam) {
+      const { record } = await api.learning();
+      const saved = record.exams?.[id];
+      exam = saved ? sessionFromRecord(saved) : null;
     }
-    if (!session.value) {
-      error.value = '没有找到这份理论答卷。';
-      return;
-    }
-    if (session.value.status === 'active' && session.value.deadlineAt && Date.now() >= session.value.deadlineAt) {
-      await submit('timeout');
-    }
+    if (!exam) throw new Error('没有找到这份理论答卷。');
+    if (!exam.questionIds.some((questionId) => questions.value[questionId])) throw new Error('找不到答卷中的题目，请返回答卷列表。');
+    session.value = exam;
+    const lastId = sessionStorage.getItem(`aigraph-theory-position:${id}`);
+    const position = paper.value.findIndex((item) => item.id === lastId);
+    index.value = Math.max(0, position);
+    if (current.value) openKinds.value[current.value.kind] = true;
+    rememberTheory(exam);
+    tick();
+    if (!locked.value && !expired.value) resume();
   } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '理论题库没有载入。';
+    loadError.value = reason instanceof Error ? reason.message : '理论题库没有载入。';
+    if (isLoginError(loadError.value)) await refreshAuth();
   }
-});
+}
 
+function tick() {
+  now.value = Date.now();
+  if (expired.value && !autoAttempted && !submitting.value) {
+    autoAttempted = true;
+    void submit('timeout');
+  }
+}
+
+onMounted(() => {
+  clock = window.setInterval(tick, 1000);
+  window.addEventListener('keydown', shortcuts);
+  void load();
+});
 onUnmounted(() => {
-  if (clock) window.clearInterval(clock);
-  if (saveTimer) window.clearTimeout(saveTimer);
+  window.clearInterval(clock);
+  window.removeEventListener('keydown', shortcuts);
 });
 
-function formatClock(ms: number) {
-  const total = Math.ceil(ms / 1000);
-  const hours = Math.floor(total / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
-  return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-function selected(id: string) {
-  return session.value?.answers[id] || [];
-}
-
+function selected(id: string) { return session.value?.answers[id] || []; }
 function choose(key: string) {
   const question = current.value;
-  const currentSession = session.value;
-  if (!question || !currentSession || currentSession.status !== 'active') return;
-  const next = question.kind === 'multi'
-    ? selected(question.id).includes(key)
-      ? selected(question.id).filter((item) => item !== key)
-      : [...selected(question.id), key].sort()
-    : [key];
-  currentSession.answers = { ...currentSession.answers, [question.id]: next };
-  currentSession.updatedAt = Date.now();
-  rememberTheory(currentSession);
-  queueSave();
+  const exam = session.value;
+  if (!question || !exam || readOnly.value) return;
+  const existing = selected(question.id);
+  const next = question.kind !== 'multi' ? [key] : existing.includes(key)
+    ? existing.filter((item) => item !== key) : [...existing, key].sort();
+  exam.answers[question.id] = next;
+  delete reveal.value[question.id];
+  saveDraft(exam);
 }
-
 function toggleMark() {
   const question = current.value;
-  const currentSession = session.value;
-  if (!question || !currentSession || currentSession.status !== 'active') return;
-  const marks = new Set(currentSession.markedQuestionIds);
+  const exam = session.value;
+  if (!question || !exam || readOnly.value) return;
+  const marks = new Set(exam.markedQuestionIds);
   if (marks.has(question.id)) marks.delete(question.id);
   else marks.add(question.id);
-  currentSession.markedQuestionIds = [...marks];
-  currentSession.updatedAt = Date.now();
-  rememberTheory(currentSession);
-  queueSave();
+  exam.markedQuestionIds = [...marks];
+  saveDraft(exam);
+}
+function saveDraft(exam: TheorySession) {
+  exam.updatedAt = Date.now();
+  rememberTheory(exam);
+  schedule();
 }
 
 function reviewMarks() {
-  const currentSession = session.value;
-  if (!currentSession?.markedQuestionIds.length) {
-    notice.value = '还没有标记题目。';
-    return;
-  }
-  const marks = currentSession.markedQuestionIds;
-  const currentId = current.value?.id;
-  const positions = marks.map((id) => paper.value.findIndex((item) => item.id === id)).filter((position) => position >= 0).sort((a, b) => a - b);
+  const positions = paper.value.map((item, position) => session.value?.markedQuestionIds.includes(item.id) ? position : -1).filter((position) => position >= 0);
   const next = positions.find((position) => position > index.value) ?? positions[0];
-  if (next === undefined || paper.value[next]?.id === currentId && positions.length === 1) {
+  if (next === undefined) {
+    notice.value = '还没有标记题目。';
+  } else if (next === index.value) {
     notice.value = '标记题目已经在当前题。';
+  } else {
+    notice.value = '';
+    void go(next);
+  }
+}
+async function go(position: number) {
+  const item = paper.value[position];
+  if (!item || !session.value) return;
+  index.value = position;
+  openKinds.value[item.kind] = true;
+  sessionStorage.setItem(`aigraph-theory-position:${session.value.id}`, item.id);
+  await nextTick();
+  if (body.value) body.value.scrollTop = 0;
+  if (paperPane.value) paperPane.value.scrollTop = 0;
+  title.value?.focus({ preventScroll: true });
+}
+function selectQuestion(id: string) {
+  sheetOpen.value = false;
+  void go(paper.value.findIndex((item) => item.id === id));
+}
+function toggleGroup(id: string) { openKinds.value[id] = !openKinds.value[id]; }
+function shortcuts(event: KeyboardEvent) {
+  if (!current.value || confirming.value || sheetOpen.value || !canUseExamShortcut(event)) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    void go(index.value + (event.key === 'ArrowLeft' ? -1 : 1));
     return;
   }
-  notice.value = '';
-  go(next);
+  if (readOnly.value || event.repeat) return;
+  const slot = '1234'.indexOf(event.key);
+  const letter = 'abcd'.indexOf(event.key.toLowerCase());
+  if (event.key.length !== 1 || (slot < 0 && letter < 0)) return;
+  const choice = choicesOf(current.value)[slot >= 0 ? slot : letter];
+  if (choice) {
+    event.preventDefault();
+    choose(choice.key);
+  }
 }
-
-function go(position: number) {
-  if (position < 0 || position >= paper.value.length) return;
-  index.value = position;
-  const kind = paper.value[position]?.kind;
-  if (kind) openKinds.value[kind] = true;
-}
-
-function queueSave() {
-  if (saveTimer) window.clearTimeout(saveTimer);
-  saveTimer = window.setTimeout(() => { void persist(); }, 400);
-}
-
-async function persist() {
-  if (!session.value) return;
-  await api.saveExam(toExamPayload(session.value));
-}
-
 async function checkCurrent() {
   const question = current.value;
-  if (!question || session.value?.mode !== 'theory-practice') return;
-  busy.value = true;
+  if (!question || session.value?.mode !== 'theory-practice' || readOnly.value || checking.value) return;
+  checking.value = true;
   error.value = '';
+  const choices = [...selected(question.id)];
   try {
-    reveal.value = { ...reveal.value, [question.id]: await api.theoryCheck(question.id, selected(question.id)) };
+    const result = await api.theoryCheck(question.id, choices);
+    if (choices.join(',') === selected(question.id).join(',')) reveal.value[question.id] = result;
   } catch (reason) {
     error.value = reason instanceof Error ? reason.message : '没能核对这道题。';
+    if (isLoginError(error.value)) await refreshAuth();
   } finally {
-    busy.value = false;
+    checking.value = false;
   }
 }
-
-async function submit(reason: 'manual' | 'timeout') {
-  const currentSession = session.value;
-  if (!currentSession || currentSession.status !== 'active' || busy.value) return;
-  const pending = paper.value.length - answeredCount.value;
-  if (reason === 'manual' && pending > 0 && !window.confirm(`还有 ${pending} 题未答，确认提交吗？`)) return;
-  busy.value = true;
+async function grade() {
+  const exam = session.value;
+  if (!exam || exam.status !== 'submitted' || grading.value) return;
+  grading.value = true;
   error.value = '';
   try {
-    currentSession.status = 'submitted';
-    currentSession.submittedAt = Date.now();
-    currentSession.submissionReason = reason;
-    currentSession.updatedAt = currentSession.submittedAt;
-    currentSession.deadlineAt = undefined;
-    rememberTheory(currentSession);
-    await persist();
-    currentSession.assessment = await api.theoryGrade(currentSession.id);
-    rememberTheory(currentSession);
-    notice.value = reason === 'timeout' ? '时间到，试卷已提交。' : '试卷已提交。';
+    exam.assessment = await api.theoryGrade(exam.id);
+    rememberTheory(exam);
   } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '没能提交试卷。';
-    currentSession.status = 'active';
+    error.value = reason instanceof Error ? reason.message : '评分未完成，请重试。';
+    if (isLoginError(error.value)) await refreshAuth();
   } finally {
-    busy.value = false;
+    grading.value = false;
   }
 }
-
-function kindTitle(kind: TheoryQuestion['kind']) {
-  return kind === 'judge' ? '判断题' : kind === 'single' ? '单选题' : '多选题';
+async function submit(reason: 'manual' | 'timeout') {
+  const exam = session.value;
+  if (!exam || locked.value || submitting.value) return;
+  submitting.value = true;
+  confirming.value = false;
+  error.value = '';
+  const submittedAt = Date.now();
+  const submissionReason = exam.deadlineAt && submittedAt >= exam.deadlineAt ? 'timeout' : reason;
+  const next: TheorySession = { ...exam, status: 'submitted', submittedAt, updatedAt: submittedAt, submissionReason, deadlineAt: undefined };
+  const saved = await flush(toExamPayload(next));
+  if (saved) {
+    Object.assign(exam, next);
+    rememberTheory(exam);
+    notice.value = submissionReason === 'timeout' ? '时间到，试卷已交卷。' : '试卷已交卷。';
+    await grade();
+  } else {
+    error.value = '交卷未完成，请重试。';
+    if (exam.deadlineAt && Date.now() >= exam.deadlineAt) autoAttempted = true;
+  }
+  submitting.value = false;
 }
-
-function numberClass(id: string) {
-  return {
-    on: current.value?.id === id,
-    done: selected(id).length > 0,
-    mark: session.value?.markedQuestionIds.includes(id),
-  };
+function retrySave() {
+  if (expired.value) void submit('timeout');
+  else void flush();
 }
 </script>
 
 <template>
-  <main class="theory" v-if="session && current">
-    <header class="theory-bar">
-      <strong>{{ session.mode === 'theory' ? '[模拟考试] 人工智能训练师三级 · 理论考试' : '[理论练习] 人工智能训练师三级 · 理论题库' }}</strong>
-      <span v-if="session.mode === 'theory' && session.status === 'active'" class="theory-clock">{{ remainingText }}</span>
-      <span v-else-if="session.assessment" class="theory-score">得分 {{ session.assessment.total }} / {{ session.assessment.maxTotal }}</span>
-      <button class="theory-ghost" type="button" @click="reviewMarks">标记复审</button>
-      <button class="theory-submit" type="button" :disabled="busy || session.status !== 'active'" @click="submit('manual')">
-        {{ session.status === 'submitted' ? '已提交' : '提交试卷' }}
-      </button>
-    </header>
-    <p v-if="session.mode === 'theory' && session.status === 'active'" class="theory-warn">考试安全提醒：请勿切换浏览器标签页或刷新页面，否则可能会影响您的考试成绩。</p>
-    <p v-if="notice" class="theory-note">{{ notice }}</p>
-    <p v-if="error" class="theory-note warn">{{ error }}</p>
-    <div class="theory-body">
-      <aside>
-        <h2>题目导航</h2>
-        <div class="theory-nav">
-        <section v-for="group in groups" :key="group.kind">
-          <button class="theory-fold" type="button" @click="openKinds[group.kind] = !openKinds[group.kind]">
-            <span>{{ group.title }} {{ group.items.length }} 题</span>
-            <small>{{ openKinds[group.kind] ? '收起' : '展开' }}</small>
-          </button>
-          <div v-show="openKinds[group.kind]" class="theory-nums">
-            <button
-              v-for="(entry, offset) in group.items"
-              :key="entry.item.id"
-              type="button"
-              :class="numberClass(entry.item.id)"
-              @click="go(entry.position)"
-            >{{ offset + 1 }}</button>
-          </div>
-        </section>
+  <main v-if="session && current" class="exam-page">
+    <ExamTopBar :title="examName(session.mode)" :answered="answeredCount" :total="paper.length" :milliseconds="remaining" :submitted="locked" :busy="submitting" @sheet="sheetOpen = true" @submit="expired ? submit('timeout') : confirming = true" />
+    <div ref="body" class="exam-body theory">
+      <aside class="exam-rail">
+        <AnswerSheet :groups="groups" compact @select="selectQuestion" @toggle="toggleGroup" />
+        <div class="review-tools">
+          <p class="muted small nums">已标记 {{ markedCount }} 题 · 未答 {{ paper.length - answeredCount }} 题</p>
+          <UiButton variant="ghost" compact @click="reviewMarks">标记复审</UiButton>
         </div>
-        <dl class="theory-legend">
-          <div><i class="current" /> <dt>当前题目</dt><dd>{{ index + 1 }}</dd></div>
-          <div><i class="done" /> <dt>已答</dt><dd>{{ answeredCount }}</dd></div>
-          <div><i class="mark" /> <dt>标记</dt><dd>{{ markedCount }}</dd></div>
-          <div><i /> <dt>未答</dt><dd>{{ paper.length - answeredCount }}</dd></div>
-        </dl>
       </aside>
-      <section class="theory-card">
-        <header>
-          <h2>{{ kindTitle(current.kind) }} 第 {{ ordinal }} 题</h2>
-          <span>{{ current.points }}分</span>
-        </header>
-        <p class="stem">{{ current.stem }}</p>
-        <div class="theory-options">
-          <label v-for="choice in choicesOf(current)" :key="choice.key" :class="{ picked: selected(current.id).includes(choice.key) }">
-            <input
-              :type="current.kind === 'multi' ? 'checkbox' : 'radio'"
-              :name="current.id"
-              :checked="selected(current.id).includes(choice.key)"
-              :disabled="session.status !== 'active'"
-              @change="choose(choice.key)"
-            />
-            <span>{{ current.kind === 'judge' ? choice.text : `${choice.key}. ${choice.text}` }}</span>
-          </label>
-        </div>
-        <p v-if="verdicts[current.id]" class="theory-result" :class="{ ok: verdicts[current.id].correct }">
-          {{ verdicts[current.id].correct ? '回答正确' : '回答错误' }} · 正确答案 {{ verdicts[current.id].answer.join('、') }}
-        </p>
-        <footer>
-          <label class="theory-mark">
-            <input type="checkbox" :checked="session.markedQuestionIds.includes(current.id)" :disabled="session.status !== 'active'" @change="toggleMark" />
-            标记此题
-          </label>
-          <div>
-            <button v-if="session.mode === 'theory-practice' && session.status === 'active'" type="button" @click="checkCurrent">核对答案</button>
-            <button type="button" :disabled="index === 0" @click="go(index - 1)">上一题</button>
-            <button type="button" :disabled="index >= paper.length - 1" @click="go(index + 1)">下一题</button>
+      <article ref="paperPane" class="exam-paper">
+        <div class="exam-paper-inner theory-paper">
+          <div v-if="session.assessment" class="grade">
+            <span>整卷得分</span> <strong class="nums">{{ session.assessment.total }} / {{ session.assessment.maxTotal }}</strong>
           </div>
-        </footer>
-      </section>
+          <p v-if="notice" class="success small" role="status">{{ notice }}</p>
+          <p v-if="error" class="error small" role="alert">{{ error }}</p>
+          <div class="question-meta">
+            <span class="muted nums small">第 {{ index + 1 }} 题 / 共 {{ paper.length }} 题</span>
+            <StatusTag>{{ kinds[current.kind] }} {{ ordinal }} · {{ current.points }} 分</StatusTag>
+          </div>
+          <h2 ref="title" tabindex="-1" class="theory-stem">{{ current.stem }}</h2>
+          <div class="theory-options" role="group" aria-label="作答选项">
+            <label v-for="choice in choicesOf(current)" :key="choice.key" :class="{ picked: selected(current.id).includes(choice.key) }">
+              <input :type="current.kind === 'multi' ? 'checkbox' : 'radio'" :name="current.id" :checked="selected(current.id).includes(choice.key)" :disabled="readOnly" @change="choose(choice.key)" />
+              <span>{{ current.kind === 'judge' ? choice.text : `${choice.key}. ${choice.text}` }}</span>
+            </label>
+          </div>
+          <p v-if="verdict" class="theory-result" :class="verdict.correct ? 'correct' : 'incorrect'" role="status">
+            {{ verdict.correct ? '回答正确' : '回答错误' }} · 正确答案 {{ verdict.answer.join('、') }}
+          </p>
+          <div class="actions theory-tools">
+            <label><input type="checkbox" :checked="session.markedQuestionIds.includes(current.id)" :disabled="readOnly" @change="toggleMark" /> 标记此题</label>
+            <UiButton class="mobile-review" variant="text" @click="reviewMarks">标记复审</UiButton>
+            <UiButton v-if="session.mode === 'theory-practice' && !locked" variant="ghost" :disabled="checking || readOnly" @click="checkCurrent">{{ checking ? '核对中…' : '核对答案' }}</UiButton>
+          </div>
+        </div>
+      </article>
     </div>
+    <footer class="exam-footer">
+      <UiButton variant="ghost" :disabled="index === 0" @click="go(index - 1)">上一题</UiButton>
+      <UiButton v-if="isLoginError(saveError) || isLoginError(error)" :to="loginTarget" variant="text">重新登录</UiButton>
+      <SaveIndicator v-else :status="status" :saved-at="savedAt" :error="saveError" :disabled="submitting" @retry="retrySave" />
+      <div class="actions">
+        <UiButton v-if="locked && !session.assessment" variant="ghost" :disabled="grading" @click="grade">{{ grading ? '评分中…' : '获取评分' }}</UiButton>
+        <UiButton :disabled="index >= paper.length - 1" @click="go(index + 1)">下一题</UiButton>
+      </div>
+    </footer>
+    <ConfirmDialog :open="confirming" title="确认交卷" confirm-label="确认交卷" @close="confirming = false" @confirm="submit('manual')">
+      <p>还有 <strong>{{ paper.length - answeredCount }} 道未答</strong>，已标记 {{ markedCount }} 道。交卷后将锁定答案。</p>
+    </ConfirmDialog>
+    <ConfirmDialog :open="sheetOpen" title="答题卡" cancel-label="关闭答题卡" drawer @close="sheetOpen = false">
+      <AnswerSheet :groups="groups" compact @select="selectQuestion" @toggle="toggleGroup" />
+    </ConfirmDialog>
   </main>
-  <main v-else class="theory theory-empty">
-    <p>{{ error || '正在打开理论试卷。' }}</p>
-    <button type="button" @click="router.push('/')">返回考场</button>
+  <main v-else class="page">
+    <EmptyState v-if="loadError" error :title="isLoginError(loadError) ? '登录状态已失效' : '理论答卷未能打开'" :detail="isLoginError(loadError) ? '登录后将返回这份答卷。' : loadError">
+      <UiButton v-if="isLoginError(loadError)" :to="loginTarget">重新登录</UiButton>
+      <UiButton v-else variant="ghost" @click="load">重试</UiButton>
+      <router-link to="/account">返回答卷列表</router-link>
+    </EmptyState>
+    <LoadingBlock v-else label="正在打开理论答卷…" />
   </main>
 </template>
 
 <style scoped>
-.theory { min-height: 100vh; background: #eef3f8; color: #1d2733; }
-.theory-bar {
-  display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 22px;
-  background: #2f6fed; color: white;
+.theory-paper { max-width: min(72ic, 56rem); margin-inline-start: 0; }
+.question-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
+.theory-paper .theory-stem { font: 700 var(--fs-lg)/1.7 var(--font-sans); }
+.theory-options { display: grid; gap: var(--sp-3); }
+.theory-options label {
+  display: flex; align-items: baseline; gap: var(--sp-3); min-height: 44px;
+  padding: var(--sp-2) var(--sp-3); background: var(--sheet); border: 1px solid var(--control-line);
+  border-radius: var(--radius); cursor: pointer; overflow-wrap: anywhere;
 }
-.theory-bar strong { margin-right: auto; font-size: 16px; }
-.theory-clock, .theory-score { background: rgba(255,255,255,.18); border-radius: 999px; padding: 4px 12px; font-variant-numeric: tabular-nums; }
-.theory-ghost, .theory-submit, .theory-card footer button, .theory-empty button {
-  border: 1px solid rgba(255,255,255,.7); background: transparent; color: white; border-radius: 999px; padding: 7px 14px;
-}
-.theory-submit { background: #f5a623; border-color: #f5a623; color: #3d2a00; font-weight: 700; }
-.theory-submit:disabled, .theory-card footer button:disabled { opacity: .55; }
-.theory-warn { margin: 0; padding: 10px 22px; background: #fde8e8; color: #9d2c2c; }
-.theory-note { margin: 0; padding: 8px 22px; background: #e7f6ee; color: #1f6b45; }
-.theory-note.warn { background: #fff4e8; color: #8a4b08; }
-.theory-body { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 16px; padding: 16px; align-items: start; }
-.theory-body aside, .theory-card { background: white; border: 1px solid #d7e1ea; border-radius: 12px; }
-.theory-body aside { padding: 14px; position: sticky; top: 12px; max-height: calc(100vh - 24px); display: flex; flex-direction: column; }
-.theory-nav { overflow: auto; min-height: 0; }
-.theory-body h2 { margin: 0 0 10px; font-size: 16px; }
-.theory-fold { display: flex; justify-content: space-between; width: 100%; border: 0; background: #f4f7fb; border-radius: 8px; padding: 8px 10px; margin-top: 8px; }
-.theory-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px 0; }
-.theory-nums button { height: 36px; border: 1px solid #d5dee7; background: white; border-radius: 8px; }
-.theory-nums button.done { background: #e7f0ff; border-color: #9dbcf2; color: #1d4e89; }
-.theory-nums button.mark { box-shadow: inset 0 -3px 0 #f5a623; }
-.theory-nums button.on { background: #2f6fed; border-color: #2f6fed; color: white; }
-.theory-legend { margin: 12px 0 0; }
-.theory-legend div { display: grid; grid-template-columns: 16px 1fr auto; gap: 8px; align-items: center; margin-top: 6px; }
-.theory-legend dt, .theory-legend dd { margin: 0; }
-.theory-legend i { width: 12px; height: 12px; border-radius: 99px; background: #d5dee7; display: block; }
-.theory-legend i.current { background: #2f6fed; }
-.theory-legend i.done { background: #7aa2e3; }
-.theory-legend i.mark { background: #f5a623; }
-.theory-card { padding: 22px 26px 18px; }
-.theory-card header { display: flex; justify-content: space-between; align-items: center; }
-.theory-card header span { background: #2f6fed; color: white; border-radius: 999px; padding: 2px 10px; font-size: 13px; }
-.stem { font-size: 18px; line-height: 1.7; }
-.theory-options { display: grid; gap: 10px; }
-.theory-options label { display: flex; gap: 10px; align-items: flex-start; border: 1px solid #d7e1ea; border-radius: 10px; padding: 12px 14px; }
-.theory-options label.picked { border-color: #2f6fed; background: #f3f7ff; }
-.theory-result { padding: 10px 12px; border-radius: 8px; background: #fff1f0; color: #9d2c2c; }
-.theory-result.ok { background: #e7f6ee; color: #1f6b45; }
-.theory-card footer { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 18px; }
-.theory-card footer button, .theory-mark { color: #1d2733; border-color: #d7e1ea; background: white; }
-.theory-mark { display: flex; gap: 8px; align-items: center; }
-.theory-empty { display: grid; place-items: center; align-content: center; gap: 12px; }
-.theory-empty button { background: #2f6fed; border: 0; }
-@media (max-width: 800px) {
-  .theory-bar { flex-wrap: wrap; }
-  .theory-bar strong { width: 100%; }
-  .theory-body { grid-template-columns: 1fr; }
-  .theory-body aside { position: static; max-height: 360px; }
-}
+.theory-options label:hover, .theory-options label.picked { border-color: var(--blue); background: var(--blue-soft); }
+.theory-options label:has(:disabled) { cursor: default; }
+.theory-result { margin-top: var(--sp-4); padding: var(--sp-3); border-radius: var(--radius-sm); }
+.theory-result.correct { color: var(--ok); background: var(--ok-soft); }
+.theory-result.incorrect { color: var(--seal); background: var(--seal-soft); }
+.theory-tools, .review-tools { margin-top: var(--sp-4); }
+.review-tools .btn { margin-top: var(--sp-2); }
+.mobile-review { display: none; }
+@media (max-width: 980px) { .mobile-review { display: inline-flex; } }
 </style>

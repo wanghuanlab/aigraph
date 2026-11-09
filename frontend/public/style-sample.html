@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三级考场 · 样式评审</title>
+  <style>
+    :root {
+      --paper: #f5f2ea;
+      --sheet: #fffdf8;
+      --sheet-sunk: #efebe1;
+      --line: #e0d9c9;
+      --line-strong: #c9bfaa;
+      --control-line: #8a7b65;
+      --ink: #1c2026;
+      --ink-2: #444b55;
+      --muted: #646975;
+      --blue: #1f4e8c;
+      --blue-hover: #183f72;
+      --blue-soft: #e6edf6;
+      --seal: #b23a2e;
+      --seal-soft: #f7e7e3;
+      --ok: #24663e;
+      --ok-soft: #e5f1e9;
+      --warn: #8b540e;
+      --warn-soft: #f8eedb;
+      --on-action: #fff;
+      --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", STSong, SimSun, serif;
+      --font-sans: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-xs: 12px;
+      --fs-sm: 14px;
+      --fs-md: 16px;
+      --fs-lg: 18px;
+      --fs-xl: 22px;
+      --fs-2xl: 28px;
+      --fs-3xl: 36px;
+      --fs-4xl: 48px;
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+      --sp-7: 48px;
+      --sp-8: 64px;
+      --radius-sm: 4px;
+      --radius: 6px;
+      --shadow-pop: 0 12px 32px rgba(28, 32, 38, .12);
+      --focus: 2px solid var(--blue);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 var(--fs-md)/1.65 var(--font-sans); }
+    h1, h2, h3, h4, p, dl, dd { margin: 0; }
+    h1, h2, h3 { font-family: var(--font-serif); line-height: 1.25; font-weight: 700; }
+    h1 { font-size: clamp(var(--fs-3xl), 4vw, var(--fs-4xl)); }
+    h2 { font-size: var(--fs-2xl); }
+    h3 { font-size: var(--fs-xl); }
+    a { color: var(--blue); }
+    button, summary { cursor: pointer; }
+    button, textarea { font: inherit; color: inherit; }
+    :focus-visible { outline: var(--focus); outline-offset: 3px; }
+    .nums { font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); }
+    .small { font-size: var(--fs-sm); }
+    .wrap { width: min(1200px, calc(100% - 2 * var(--sp-6))); margin-inline: auto; }
+
+    .site { border-bottom: 1px solid var(--line-strong); background: var(--sheet); }
+    .site-inner, .brand, .site nav { display: flex; align-items: center; }
+    .site-inner { min-height: 68px; justify-content: space-between; gap: var(--sp-5); }
+    .brand { gap: var(--sp-3); color: var(--ink); }
+    .brand-mark {
+      display: grid; place-items: center; flex: 0 0 36px; height: 36px;
+      color: var(--seal); border: 2px solid var(--seal); border-radius: var(--radius-sm);
+      font: 700 var(--fs-xl)/1 var(--font-serif);
+    }
+    .brand small { display: block; color: var(--ink-2); font-size: var(--fs-xs); line-height: 1.4; }
+    .brand strong { display: block; font: 700 var(--fs-lg)/1.3 var(--font-serif); }
+    .site nav { gap: var(--sp-5); font-size: var(--fs-sm); }
+    .site nav a { color: var(--ink-2); text-decoration: none; padding-block: var(--sp-2); }
+    .site nav a:hover, .site nav a[aria-current] { color: var(--blue); text-decoration: underline; text-underline-offset: 6px; }
+
+    main { padding-block: var(--sp-6) var(--sp-8); }
+    .page-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-4); margin-bottom: var(--sp-5); }
+    .page-title p { margin-top: var(--sp-2); color: var(--ink-2); }
+    .edition { color: var(--ink-2); font-size: var(--fs-xs); padding: var(--sp-1) var(--sp-2); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); white-space: nowrap; }
+    .sheet { border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--sheet); }
+    .resume {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center;
+      gap: var(--sp-6); padding: var(--sp-5); border-inline-start: 4px solid var(--blue);
+    }
+    .resume h2 { font-size: var(--fs-xl); margin: var(--sp-1) 0 var(--sp-2); }
+    .resume-meta { display: flex; gap: var(--sp-5); }
+    .resume-meta dd { color: var(--ink); font-size: var(--fs-xl); line-height: 1.2; font-weight: 700; }
+    .resume-meta dt { color: var(--muted); font-size: var(--fs-xs); margin-bottom: var(--sp-1); }
+    .subjects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); margin-top: var(--sp-4); }
+    .subject { padding: var(--sp-5); }
+    .subject-head, .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-2) var(--sp-4); }
+    .subject-head { flex-wrap: wrap; }
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: var(--sp-4); padding-block: var(--sp-3); border-block: 1px solid var(--line); }
+    .facts div + div { border-inline-start: 1px solid var(--line); padding-inline-start: var(--sp-4); }
+    .facts dt { font-size: var(--fs-xs); color: var(--muted); }
+    .facts dd { font-weight: 700; font-size: var(--fs-xl); white-space: nowrap; }
+    .facts dd span { font-size: var(--fs-sm); font-weight: 400; margin-inline-start: var(--sp-1); }
+    .actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 var(--sp-4);
+      border: 1px solid transparent; border-radius: var(--radius); background: transparent;
+      color: var(--ink); font: 600 var(--fs-sm)/1.3 var(--font-sans); text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary { background: var(--blue); border-color: var(--blue); color: var(--on-action); }
+    .btn-primary:hover, .btn-primary:active { background: var(--blue-hover); }
+    .btn-secondary { background: var(--sheet); border-color: var(--control-line); }
+    .btn-secondary:hover { background: var(--sheet-sunk); }
+    .btn-entry { background: var(--blue-soft); color: var(--blue); border-color: var(--blue); }
+    .btn-entry:hover { color: var(--on-action); background: var(--blue); }
+    .btn-danger { background: var(--seal); border-color: var(--seal); color: var(--on-action); }
+    .btn-danger:hover { background: var(--seal-soft); color: var(--seal); }
+    .btn-remove { color: var(--seal); border-color: var(--seal); }
+    .btn-remove:hover { background: var(--seal-soft); }
+    .btn-text { color: var(--blue); padding-inline: var(--sp-1); }
+    .btn-text:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn:disabled { cursor: default; opacity: .55; }
+    details.rules { margin-top: var(--sp-3); }
+    details.rules summary { width: fit-content; color: var(--blue); font-size: var(--fs-sm); padding-block: var(--sp-1); }
+    details.rules summary:hover { text-decoration: underline; }
+    details.rules p { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--ink-2); }
+    .tag { display: inline-block; width: fit-content; border-radius: 999px; padding: 2px var(--sp-2); background: var(--sheet-sunk); color: var(--ink-2); font-size: var(--fs-xs); white-space: nowrap; }
+    .tag-blue { background: var(--blue-soft); color: var(--blue); }
+    .tag-ok { background: var(--ok-soft); color: var(--ok); }
+    .tag-warn { background: var(--warn-soft); color: var(--warn); }
+    .tag-danger { background: var(--seal-soft); color: var(--seal); }
+
+    .scores { margin-top: var(--sp-6); }
+    .section-head { margin-bottom: var(--sp-3); }
+    .section-head a { font-size: var(--fs-sm); text-underline-offset: 3px; }
+    .score-grid { display: grid; grid-template-columns: minmax(0, 1fr) 116px 120px 132px; gap: var(--sp-4); align-items: center; padding: var(--sp-3) var(--sp-5); }
+    .score-head { background: var(--sheet-sunk); color: var(--ink-2); font-size: var(--fs-xs); border-radius: var(--radius) var(--radius) 0 0; }
+    .score-row { text-decoration: none; color: var(--ink); border-top: 1px solid var(--line); font-size: var(--fs-sm); }
+    .score-row:hover { background: var(--blue-soft); }
+    .score-value { font-size: var(--fs-lg); font-weight: 700; }
+    .score-value small { font-size: var(--fs-xs); color: var(--muted); font-weight: 400; }
+
+    .review-section { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid var(--line-strong); }
+    .review-section > p { margin-bottom: var(--sp-4); color: var(--ink-2); }
+    .exam { display: grid; }
+    .exam-top, .exam-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
+    .exam-top { border-bottom: 1px solid var(--line-strong); }
+    .exam-top h3 { font-family: var(--font-sans); font-size: var(--fs-md); }
+    .exam-top .actions { gap: var(--sp-3); }
+    .clock { font-weight: 700; }
+    .clock span { color: var(--muted); font-size: var(--fs-xs); font-weight: 400; margin-inline-end: var(--sp-1); }
+    .exam-columns { display: grid; grid-template-columns: 220px minmax(0, 1fr) 272px; }
+    .question-rail, .question-paper, .answer-area { min-width: 0; padding: var(--sp-5); }
+    .question-rail { border-inline-end: 1px solid var(--line-strong); background: var(--paper); }
+    .answer-area { border-inline-start: 1px solid var(--line-strong); }
+    .question-rail h4, .answer-area h4 { margin-bottom: var(--sp-3); }
+    .question-list { display: grid; gap: var(--sp-2); }
+    .q-item {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--sp-1); align-items: center;
+      min-width: 0; border: 1px solid var(--line-strong); border-inline-start: 3px solid var(--control-line);
+      border-radius: var(--radius-sm); background: var(--sheet); padding: var(--sp-2); text-align: start; font-size: var(--fs-xs);
+    }
+    .q-item strong { font-size: var(--fs-sm); }
+    .q-item span { color: var(--ink-2); }
+    .q-item small { grid-column: 1 / -1; color: var(--muted); font-size: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .q-item.done { border-inline-start-color: var(--ok); }
+    .q-item.current { border-color: var(--blue); background: var(--blue-soft); }
+    .q-item.current strong, .q-item.current small { color: var(--blue); }
+    .q-item:hover { border-color: var(--blue); }
+    .legend { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-2); margin-top: var(--sp-3); }
+    .question-paper h3 { font-size: clamp(var(--fs-xl), 2.3vw, var(--fs-2xl)); margin-block: var(--sp-2) var(--sp-4); }
+    .question-copy { max-inline-size: 72ic; color: var(--ink); }
+    .question-copy h4 { margin-block: var(--sp-5) var(--sp-2); }
+    .question-copy ol { margin: var(--sp-3) 0 0; padding-inline-start: 1.4em; }
+    .question-copy li + li { margin-top: var(--sp-2); }
+    .attachment {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-2);
+      background: var(--sheet-sunk); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--sp-2) var(--sp-3);
+      font-size: var(--fs-sm);
+    }
+    .attachment small { display: block; }
+    .answer-area > p { margin-bottom: var(--sp-3); }
+    .answer-group { padding-block: var(--sp-3); border-top: 1px solid var(--line); }
+    .answer-group strong, .answer-group label { display: block; font-size: var(--fs-sm); font-weight: 700; }
+    .answer-example {
+      display: block; width: 100%; min-height: 200px; padding: var(--sp-2);
+      margin-top: var(--sp-2); border: 1px solid var(--control-line); border-radius: var(--radius-sm);
+      background: var(--sheet); font-size: var(--fs-sm); resize: vertical;
+    }
+    .drop {
+      display: grid; place-items: center; width: 100%; min-height: 70px; margin-top: var(--sp-2);
+      border: 1px dashed var(--control-line); border-radius: var(--radius); background: var(--sheet);
+      color: var(--blue); font-size: var(--fs-sm);
+    }
+    .drop:hover { background: var(--blue-soft); }
+    .file-name { display: block; overflow-wrap: anywhere; margin-top: var(--sp-2); font-size: var(--fs-xs); color: var(--ok); }
+    .exam-footer { border-top: 1px solid var(--line-strong); background: var(--sheet); border-radius: 0 0 var(--radius) var(--radius); }
+    .saved { color: var(--ok); font-size: var(--fs-sm); text-align: center; }
+    .drawer-trigger { display: none; }
+
+    .spec-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-4); }
+    .spec-card { padding: var(--sp-5); }
+    .spec-card h3 { margin-bottom: var(--sp-4); }
+    .swatches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); }
+    .swatch { min-width: 0; min-height: 90px; display: grid; align-content: end; padding: var(--sp-2); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--swatch); color: var(--swatch-text, var(--ink)); font-size: var(--fs-sm); }
+    .swatch code { font: var(--fs-xs) var(--font-mono); }
+    .type-sample { padding-block: var(--sp-3); margin-bottom: var(--sp-3); border-block: 1px solid var(--line); }
+    .type-sample strong { display: block; font: 700 var(--fs-xl)/1.3 var(--font-serif); margin-bottom: var(--sp-2); }
+    .state-sample { margin-top: var(--sp-4); }
+
+    dialog {
+      width: min(420px, calc(100% - 2 * var(--sp-4))); max-height: 85dvh; overflow: auto;
+      border: 1px solid var(--line-strong); border-radius: var(--radius); padding: var(--sp-5);
+      color: var(--ink); background: var(--sheet); box-shadow: var(--shadow-pop);
+    }
+    dialog::backdrop { background: rgba(28, 32, 38, .45); }
+    dialog p { margin-block: var(--sp-2) var(--sp-4); }
+    dialog form { display: flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: end; }
+    #answer-drawer form { margin-top: var(--sp-4); }
+
+    @media (max-width: 980px) {
+      .wrap { width: calc(100% - 2 * var(--sp-4)); }
+      .subjects, .spec-grid, .exam-columns { grid-template-columns: minmax(0, 1fr); }
+      .question-rail { display: none; }
+      .drawer-trigger { display: inline-flex; }
+      .answer-area { border-inline-start: 0; border-top: 1px solid var(--line-strong); }
+      .exam-top { flex-wrap: wrap; }
+      .btn { min-height: 44px; }
+      #answer-drawer {
+        width: min(100%, 540px); margin-block: auto 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main { padding-top: var(--sp-4); }
+      .site-inner { min-height: 60px; gap: var(--sp-2); }
+      .brand { gap: var(--sp-2); }
+      .brand-mark { height: 30px; flex-basis: 30px; font-size: var(--fs-lg); }
+      .brand strong { font-size: var(--fs-md); }
+      .brand small { font-size: var(--fs-xs); }
+      .site nav { gap: var(--sp-2); font-size: var(--fs-xs); }
+      .page-title { display: block; margin-bottom: var(--sp-4); }
+      .edition { display: none; }
+      .resume { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-2); padding: var(--sp-3) var(--sp-4); }
+      .resume > div:first-child { grid-column: 1 / -1; }
+      .resume-meta { gap: var(--sp-4); }
+      .subject, .spec-card, .question-paper, .answer-area { padding: var(--sp-4); }
+      .subject { padding-block: var(--sp-3); }
+      .facts { margin-block: var(--sp-3); padding-block: var(--sp-2); }
+      details.rules { margin-top: var(--sp-2); }
+      .facts div + div { padding-inline-start: var(--sp-2); }
+      .score-head { display: none; }
+      .score-row { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-1) var(--sp-2); padding-inline: var(--sp-4); }
+      .score-row:first-of-type { border-top: 0; border-radius: var(--radius) var(--radius) 0 0; }
+      .score-row time { justify-self: end; }
+      .exam-top .actions { justify-content: space-between; width: 100%; gap: var(--sp-2); }
+      .exam-top .progress { font-size: var(--fs-xs); }
+      .exam-top .btn { padding-inline: var(--sp-2); }
+      .exam-top, .exam-footer { padding-inline: var(--sp-3); }
+      .exam-footer .btn { padding-inline: var(--sp-2); }
+      .attachment .btn { min-height: 36px; }
+      .swatch { min-height: 72px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap site-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">考</span>
+        <div><small>人工智能训练师</small><strong>三级考场</strong></div>
+      </div>
+      <nav aria-label="样张导航">
+        <a href="#dashboard" aria-current="location">工作台</a>
+        <a href="#exam-sample">答题页</a>
+        <a href="#components">组件</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="dashboard">
+    <header class="page-title">
+      <div>
+        <h1>考场工作台</h1>
+        <p>人工智能训练师三级 · 理论知识与操作技能</p>
+      </div>
+      <span class="edition">静态样张 · 阶段 0</span>
+    </header>
+
+    <section class="sheet resume" aria-labelledby="resume-title">
+      <div>
+        <span class="tag tag-blue">进行中</span>
+        <h2 id="resume-title">操作技能模拟考试</h2>
+        <p class="muted small">当前第 3 题 · 模型开发与测试</p>
+      </div>
+      <dl class="resume-meta nums">
+        <div><dt>已答</dt><dd>2 / 6</dd></div>
+        <div><dt>剩余时间</dt><dd>47:18</dd></div>
+      </dl>
+      <a class="btn btn-primary" href="#exam-sample">继续作答</a>
+    </section>
+
+    <div class="subjects" aria-label="考试入口">
+      <section class="sheet subject" aria-labelledby="theory-title">
+        <header class="subject-head">
+          <h2 id="theory-title">理论知识</h2>
+          <p class="muted small nums">练习题库 900 题</p>
+        </header>
+        <dl class="facts nums">
+          <div><dt>模拟题量</dt><dd>190<span>题</span></dd></div>
+          <div><dt>限时</dt><dd>90<span>分钟</span></dd></div>
+          <div><dt>满分</dt><dd>100<span>分</span></dd></div>
+        </dl>
+        <div class="actions">
+          <button type="button" class="btn btn-entry">开始模拟考试</button>
+          <button type="button" class="btn btn-secondary">开始练习</button>
+        </div>
+        <details class="rules">
+          <summary>查看考核方案</summary>
+          <p>判断 40 题，每题 0.5 分。单选 140 题，每题 0.5 分。多选 10 题，每题 1 分。</p>
+        </details>
+      </section>
+      <section class="sheet subject" aria-labelledby="practical-title">
+        <header class="subject-head">
+          <h2 id="practical-title">操作技能</h2>
+          <p class="muted small nums">练习题库 40 题</p>
+        </header>
+        <dl class="facts nums">
+          <div><dt>模拟题量</dt><dd>6<span>题</span></dd></div>
+          <div><dt>限时</dt><dd>120<span>分钟</span></dd></div>
+          <div><dt>满分</dt><dd>100<span>分</span></dd></div>
+        </dl>
+        <div class="actions">
+          <a class="btn btn-entry" href="#exam-sample">开始模拟考试</a>
+          <button type="button" class="btn btn-secondary">开始练习</button>
+        </div>
+        <details class="rules">
+          <summary>查看考核方案</summary>
+          <p>按六个分组各抽一题，分值依次为 25、15、20、15、20、5 分。</p>
+        </details>
+      </section>
+    </div>
+
+    <section class="scores" aria-labelledby="scores-title">
+      <header class="section-head">
+        <h2 id="scores-title">最近成绩</h2>
+        <a href="#exam-sample">查看答卷样张</a>
+      </header>
+      <div class="sheet">
+        <div class="score-grid score-head" aria-hidden="true"><span>试卷名称</span><span>状态</span><span>得分</span><span>完成时间</span></div>
+        <a class="score-grid score-row" href="#exam-sample">
+          <strong>理论知识模拟考试</strong><span class="tag tag-ok">已阅卷</span>
+          <span class="score-value nums" aria-label="100 分中得 86 分">86 <small>/ 100</small></span><time class="muted nums" datetime="2026-11-08T20:43:00+08:00">11 月 8 日 20:43</time>
+        </a>
+        <a class="score-grid score-row" href="#exam-sample">
+          <strong>操作技能模拟考试</strong><span class="tag">已交卷</span>
+          <span class="muted small">待阅卷</span><time class="muted nums" datetime="2026-11-07T21:18:00+08:00">11 月 7 日 21:18</time>
+        </a>
+      </div>
+    </section>
+
+    <section class="review-section" id="exam-sample" aria-labelledby="exam-sample-title">
+      <header class="section-head"><h2 id="exam-sample-title">操作技能答题页</h2></header>
+      <p class="small">示例取自题库 2.2.1。进度、时间和文件状态用于演示。</p>
+      <div class="sheet exam">
+        <header class="exam-top">
+          <h3>操作技能模拟考试</h3>
+          <div class="actions nums">
+            <button type="button" class="btn btn-secondary drawer-trigger" data-dialog="answer-drawer">答题卡</button>
+            <span class="progress small">已答 2/6</span>
+            <span class="clock"><span>剩余</span>47:18</span>
+            <button type="button" class="btn btn-danger" data-dialog="submit-preview">交卷</button>
+          </div>
+        </header>
+        <div class="exam-columns">
+          <aside class="question-rail" aria-label="答题卡">
+            <h4>答题卡</h4>
+            <div class="question-list">
+              <button type="button" class="q-item done"><strong>1.1.1</strong><span>25 分</span><small>✓ 已答 · 智能医疗系统</small></button>
+              <button type="button" class="q-item done"><strong>2.1.4</strong><span>15 分</span><small>✓ 已答 · 医疗数据清洗</small></button>
+              <button type="button" class="q-item current" aria-current="step"><strong>2.2.1</strong><span>20 分</span><small>▸ 当前 · 部分作答 · 智能信用评分</small></button>
+              <button type="button" class="q-item"><strong>3.1.1</strong><span>15 分</span><small>○ 未答 · 智能音箱数据分析</small></button>
+              <button type="button" class="q-item"><strong>3.2.3</strong><span>20 分</span><small>○ 未答 · 面部表情识别流程</small></button>
+              <button type="button" class="q-item"><strong>4.1.1</strong><span>5 分</span><small>○ 未答 · 培训大纲编写</small></button>
+            </div>
+            <div class="legend"><span class="tag tag-ok">✓ 已答</span><span class="tag tag-warn">◐ 部分作答</span><span class="tag">○ 未答</span></div>
+          </aside>
+          <article class="question-paper" aria-labelledby="question-title">
+            <p class="muted small nums">第 3 题 / 共 6 题　2.2.1　20 分　参考 20 分钟</p>
+            <h3 id="question-title">智能信用评分 Logistic 回归模型开发与测试</h3>
+            <div class="attachment">
+              <div><strong>2.2.1.zip</strong><small class="muted">素材包 · 2.5 MB</small></div>
+              <button type="button" class="btn btn-text">下载材料</button>
+            </div>
+            <div class="question-copy">
+              <h4>工作任务</h4>
+              <p>根据提供的 finance 数据集补全 2.2.1.ipynb。选择合适的特征，开发信用评分模型，利用测试工具对模型进行测试，分析测试结果并完成测试报告。</p>
+              <ol>
+                <li>保存模型和训练结果。</li>
+                <li>记录模型测试结果。</li>
+                <li>评估模型性能，分析错误原因并给出改进建议。</li>
+              </ol>
+            </div>
+          </article>
+          <aside class="answer-area" aria-label="作答区">
+            <h4>作答区</h4>
+            <p class="muted small">附件只保存在这台浏览器。</p>
+            <div class="answer-group">
+              <strong>1. 保存模型和训练结果</strong>
+              <span class="file-name">✓ 已选 2.2.1_model.pkl</span>
+              <button type="button" class="drop">选择文件或拖到这里</button>
+            </div>
+            <div class="answer-group">
+              <strong>2. 记录模型测试结果</strong>
+              <button type="button" class="drop">选择文件或拖到这里</button>
+            </div>
+            <div class="answer-group">
+              <label for="analysis-example">3. 错误分析</label>
+              <textarea id="analysis-example" class="answer-example" readonly aria-describedby="analysis-count">分别检查两类样本的误判。</textarea>
+              <p id="analysis-count" class="muted small nums">12 字</p>
+            </div>
+          </aside>
+        </div>
+        <footer class="exam-footer">
+          <button type="button" class="btn btn-secondary">上一题</button>
+          <span class="saved nums" role="status">✓ 文字已保存 10:26</span>
+          <button type="button" class="btn btn-primary">下一题</button>
+        </footer>
+      </div>
+    </section>
+
+    <section class="review-section" id="components" aria-labelledby="components-title">
+      <header class="section-head"><h2 id="components-title">色板与组件</h2></header>
+      <div class="spec-grid">
+        <section class="sheet spec-card" aria-labelledby="palette-title">
+          <h3 id="palette-title">色板</h3>
+          <div class="swatches">
+            <div class="swatch" style="--swatch: var(--paper)">纸底<code>#F5F2EA</code></div>
+            <div class="swatch" style="--swatch: var(--sheet)">答题纸<code>#FFFDF8</code></div>
+            <div class="swatch" style="--swatch: var(--sheet-sunk)">沉底<code>#EFEBE1</code></div>
+            <div class="swatch" style="--swatch: var(--ink); --swatch-text: var(--on-action)">墨色<code>#1C2026</code></div>
+            <div class="swatch" style="--swatch: var(--blue); --swatch-text: var(--on-action)">墨蓝<code>#1F4E8C</code></div>
+            <div class="swatch" style="--swatch: var(--seal); --swatch-text: var(--on-action)">印章红<code>#B23A2E</code></div>
+          </div>
+        </section>
+        <section class="sheet spec-card" aria-labelledby="controls-title">
+          <h3 id="controls-title">字体与操作</h3>
+          <div class="type-sample">
+            <strong>人工智能训练师三级</strong>
+            <p class="small nums">选择题目继续作答。剩余时间 47:18。</p>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-primary">下一题</button>
+            <button type="button" class="btn btn-secondary">上一题</button>
+            <button type="button" class="btn btn-danger" data-dialog="submit-preview">交卷</button>
+            <button type="button" class="btn btn-text">核对答案</button>
+            <button type="button" class="btn btn-remove">删除</button>
+          </div>
+          <div class="actions state-sample">
+            <span class="tag tag-blue">当前题</span><span class="tag tag-ok">✓ 已答</span><span class="tag tag-warn">◐ 部分作答</span><span class="tag tag-warn">⚑ 已标记</span><span class="tag">○ 未答</span><span class="tag tag-danger nums">时间将到 08:42</span>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="submit-preview" aria-labelledby="submit-title">
+    <h3 id="submit-title">确认交卷</h3>
+    <p>还有 <strong>3 道未答</strong>、<strong>1 道部分作答</strong>，已标记 0 道。交卷后将锁定答案。</p>
+    <form method="dialog">
+      <button class="btn btn-secondary" autofocus>返回检查</button>
+      <button class="btn btn-danger">确认交卷</button>
+    </form>
+  </dialog>
+
+  <dialog id="answer-drawer" aria-labelledby="drawer-title">
+    <h3 id="drawer-title">答题卡</h3>
+    <p class="small nums">已答 2 / 6</p>
+    <div class="question-list">
+      <button type="button" class="q-item done"><strong>1.1.1</strong><span>25 分</span><small>✓ 已答 · 智能医疗系统</small></button>
+      <button type="button" class="q-item done"><strong>2.1.4</strong><span>15 分</span><small>✓ 已答 · 医疗数据清洗</small></button>
+      <button type="button" class="q-item current" aria-current="step"><strong>2.2.1</strong><span>20 分</span><small>▸ 当前 · 部分作答 · 智能信用评分</small></button>
+      <button type="button" class="q-item"><strong>3.1.1</strong><span>15 分</span><small>○ 未答 · 智能音箱数据分析</small></button>
+      <button type="button" class="q-item"><strong>3.2.3</strong><span>20 分</span><small>○ 未答 · 面部表情识别流程</small></button>
+      <button type="button" class="q-item"><strong>4.1.1</strong><span>5 分</span><small>○ 未答 · 培训大纲编写</small></button>
+    </div>
+    <form method="dialog"><button class="btn btn-secondary" autofocus>关闭答题卡</button></form>
+  </dialog>
+
+  <script>
+    for (const trigger of document.querySelectorAll('[data-dialog]')) {
+      trigger.addEventListener('click', () => {
+        document.getElementById(trigger.dataset.dialog).showModal();
+      });
+    }
+  </script>
+</body>
+</html>

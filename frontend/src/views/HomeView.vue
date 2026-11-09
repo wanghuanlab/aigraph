@@ -1,22 +1,37 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { api, type ExamRecord, type Question, type TheoryQuestion } from '../api';
-import { auth } from '../auth';
-import { createSession, rememberSession } from '../exam/session';
-import { createTheorySession, rememberTheory, sessionFromRecord, toExamPayload } from '../exam/theory';
+import { auth, refreshAuth } from '../auth';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
+import ExamRecordList from '../components/ExamRecordList.vue';
+import EmptyState from '../components/EmptyState.vue';
+import LoadingBlock from '../components/LoadingBlock.vue';
+import StatusTag from '../components/StatusTag.vue';
+import UiButton from '../components/UiButton.vue';
+import UiCard from '../components/UiCard.vue';
+import { filesFor, type StoredFile } from '../exam/files';
+import { examDeadline, examLocation, examName, clockLabel, isLoginError, practicalFromRecord, restoreFileIds } from '../exam/presentation';
+import { createSession, questionStatus, readSession, rememberSession } from '../exam/session';
+import { createTheorySession, readTheory, rememberTheory, toExamPayload } from '../exam/theory';
 
+const route = useRoute();
 const router = useRouter();
 const questions = ref<Question[]>([]);
 const theoryQuestions = ref<TheoryQuestion[]>([]);
-const groups = ref<Array<{ id: string; title: string; points: number }>>([]);
 const version = ref('');
-const exams = ref<ExamRecord[]>([]);
+const records = ref<ExamRecord[]>([]);
 const papersReady = ref(false);
-const error = ref('');
+const paperError = ref('');
+const errors = ref({ practical: '', theory: '' });
+const startError = ref('');
 const busy = ref(false);
+const now = ref(Date.now());
+const pending = ref<ExamRecord['mode']>();
+const resumeFiles = ref<StoredFile[]>();
+let clock: number;
 
-const rules = [
+const practicalRules = [
   { label: '1.1 业务数据流程设计 / 1.2 业务模块效果优化', points: 25, note: '10 选 1' },
   { label: '2.1 数据清洗与标注', points: 15, note: '5 选 1' },
   { label: '2.2 模型开发与测试', points: 20, note: '5 选 1' },
@@ -24,195 +39,230 @@ const rules = [
   { label: '3.2 人机交互流程设计', points: 20, note: '5 选 1' },
   { label: '4.1 培训大纲编写 / 4.2 数据采集、处理与标注指导', points: 5, note: '10 选 1' },
 ];
-
-const papers = computed(() => [...exams.value].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).slice(0, 6));
-
-onMounted(async () => {
+const theoryRules = [
+  { label: '判断题', points: 20, note: '40 题，每题 0.5 分' },
+  { label: '单选题', points: 70, note: '140 题，每题 0.5 分' },
+  { label: '多选题', points: 10, note: '10 题，每题 1 分' },
+];
+const subjects = computed(() => [
+  { key: 'theory' as const, label: '理论知识', bank: 900, count: 190, minutes: 90, ready: theoryQuestions.value.length >= 900, exam: 'theory' as const, practice: 'theory-practice' as const, rules: theoryRules },
+  { key: 'practical' as const, label: '操作技能', bank: 40, count: 6, minutes: 120, ready: questions.value.length === 40, exam: 'exam' as const, practice: 'practice' as const, rules: practicalRules },
+]);
+const recent = computed(() => records.value.filter((exam) => exam.status === 'submitted').slice(0, 6));
+const resume = computed(() => records.value.find((exam) => exam.status === 'active' && (examDeadline(exam) ?? Infinity) > now.value));
+const remaining = computed(() => {
+  const deadline = resume.value && examDeadline(resume.value);
+  return deadline === undefined ? undefined : clockLabel(deadline - now.value);
+});
+watch(() => resume.value?.id, async (id, _oldId, onCleanup) => {
+  resumeFiles.value = undefined;
+  if (!id || (resume.value?.mode !== 'exam' && resume.value?.mode !== 'practice')) return;
+  let current = true;
+  onCleanup(() => { current = false; });
   try {
-    const result = await api.bank();
-    questions.value = result.bank.questions;
-    groups.value = result.bank.groups;
-    version.value = result.bank.bankVersion;
-  } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '题库没有载入。';
-  }
-  try {
-    const result = await api.theoryBank();
-    theoryQuestions.value = result.bank.questions;
-  } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '理论题库没有载入。';
+    const stored = await filesFor(id);
+    if (current) resumeFiles.value = stored;
+  } catch {
+    // The server record still provides the saved text if IndexedDB is unavailable.
   }
 });
+const answered = computed(() => {
+  const exam = resume.value;
+  if (!exam) return 0;
+  if (exam.mode === 'exam' || exam.mode === 'practice') {
+    const local = readSession(exam.id) ?? practicalFromRecord(exam, version.value);
+    if (local && questions.value.length) {
+      if (resumeFiles.value) restoreFileIds(local, resumeFiles.value);
+      return questions.value.filter((question) => exam.questionIds.includes(question.id) && questionStatus(question, local) === 'complete').length;
+    }
+  } else {
+    const local = readTheory(exam.id);
+    if (local) return exam.questionIds.filter((id) => local.answers[id]?.length).length;
+  }
+  return exam.questionIds.filter((id) => Object.values(exam.answers?.[id] ?? {}).some((field) => field.text?.trim())).length;
+});
+
+async function loadBank(key: 'practical' | 'theory') {
+  errors.value[key] = '';
+  try {
+    if (key === 'theory') {
+      theoryQuestions.value = (await api.theoryBank()).bank.questions;
+      if (theoryQuestions.value.length < 900) throw new Error('理论题库尚不完整，请稍后重试。');
+    } else {
+      const { bank } = await api.bank();
+      questions.value = bank.questions;
+      version.value = bank.bankVersion;
+      if (questions.value.length !== 40) throw new Error('操作技能题库尚不完整，请稍后重试。');
+    }
+  } catch (reason) {
+    errors.value[key] = reason instanceof Error ? reason.message : '题库未能加载。';
+  }
+}
 
 async function loadPapers() {
+  if (!auth.user) return;
+  paperError.value = '';
+  papersReady.value = false;
   try {
-    if (!auth.user) return;
-    const record = await api.learning();
-    exams.value = Object.values(record.record.exams || {});
+    const { record } = await api.learning();
+    records.value = Object.values(record.exams || {}).sort((a, b) => b.updatedAt - a.updatedAt);
+  } catch (reason) {
+    paperError.value = reason instanceof Error ? reason.message : '答卷未能加载。';
+    if (isLoginError(paperError.value)) await refreshAuth();
   } finally {
     papersReady.value = true;
   }
 }
 
-onMounted(loadPapers);
-
-async function start(mode: 'practice' | 'exam') {
-  if (!auth.user) {
-    await router.push({ path: '/account', query: { next: '/' } });
-    return;
+onMounted(() => {
+  void loadBank('practical');
+  void loadBank('theory');
+  void loadPapers();
+  clock = window.setInterval(() => { now.value = Date.now(); }, 1000);
+  const mode = route.query.start;
+  if (auth.user && (mode === 'practice' || mode === 'exam' || mode === 'theory' || mode === 'theory-practice')) {
+    pending.value = mode;
+    void router.replace({ path: '/' });
   }
-  if (!questions.value.length) return;
+});
+onUnmounted(() => window.clearInterval(clock));
+
+function chooseMode(mode: ExamRecord['mode']) {
+  if (auth.user) pending.value = mode;
+  else void router.push({ name: 'account', query: { next: router.resolve({ name: 'home', query: { start: mode } }).fullPath } });
+}
+
+async function start() {
+  const mode = pending.value;
+  if (!mode || busy.value) return;
+  const subject = subjects.value.find((item) => item.exam === mode || item.practice === mode);
+  if (!subject?.ready) return;
+  pending.value = undefined;
   busy.value = true;
-  error.value = '';
+  startError.value = '';
   try {
-    const session = createSession(mode, questions.value, version.value);
-    rememberSession(session);
-    await api.saveExam(session);
-    await router.push(`/workspace/${session.id}`);
+    if (mode === 'practice' || mode === 'exam') {
+      const session = createSession(mode, questions.value, version.value);
+      await api.saveExam(session);
+      rememberSession(session);
+      await router.push(examLocation(session));
+    } else {
+      const session = createTheorySession(mode, theoryQuestions.value);
+      await api.saveExam(toExamPayload(session));
+      rememberTheory(session);
+      await router.push(examLocation(session));
+    }
   } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '没能开始。';
+    startError.value = reason instanceof Error ? reason.message : '没能开始作答。';
+    if (isLoginError(startError.value)) {
+      await refreshAuth();
+      chooseMode(mode);
+    }
   } finally {
     busy.value = false;
   }
-}
-
-function paperName(mode: ExamRecord['mode']) {
-  if (mode === 'theory') return '理论模拟考试';
-  if (mode === 'theory-practice') return '理论练习';
-  if (mode === 'exam') return '操作模拟考试';
-  return '操作全题练习';
-}
-
-async function startTheory(mode: 'theory' | 'theory-practice') {
-  if (!auth.user) {
-    await router.push({ path: '/account', query: { next: '/' } });
-    return;
-  }
-  if (theoryQuestions.value.length < 900) return;
-  busy.value = true;
-  error.value = '';
-  try {
-    const session = createTheorySession(mode, theoryQuestions.value);
-    rememberTheory(session);
-    await api.saveExam(toExamPayload(session));
-    await router.push(`/theory/${session.id}`);
-  } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '没能开始理论考试。';
-  } finally {
-    busy.value = false;
-  }
-}
-
-function openPaper(exam: ExamRecord) {
-  const theory = sessionFromRecord(exam);
-  if (theory) {
-    rememberTheory(theory);
-    router.push(`/theory/${exam.id}`);
-    return;
-  }
-  if (exam.mode !== 'practice' && exam.mode !== 'exam') return;
-  rememberSession({
-    id: exam.id,
-    schemaVersion: 1,
-    bankVersion: version.value,
-    mode: exam.mode,
-    status: exam.status,
-    questionIds: exam.questionIds,
-    currentQuestionId: exam.questionIds[0],
-    startedAt: exam.startedAt,
-    updatedAt: exam.updatedAt,
-    deadlineAt: exam.mode === 'exam' && exam.status === 'active' ? exam.startedAt + 120 * 60 * 1000 : undefined,
-    submittedAt: exam.submittedAt,
-    submissionReason: exam.submissionReason,
-    answers: Object.fromEntries(Object.entries(exam.answers || {}).map(([questionId, fields]) => [
-      questionId,
-      Object.fromEntries(Object.entries(fields).map(([fieldId, value]) => [fieldId, { text: value.text || '', fileIds: [] }])),
-    ])),
-    markedQuestionIds: [],
-    assessment: exam.assessment,
-  });
-  router.push(`/workspace/${exam.id}`);
-}
-
-function when(value: number) {
-  return new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 </script>
 
 <template>
   <main class="page">
-    <section class="hero">
+    <header class="page-title">
+      <h1>考场工作台</h1>
+      <p>人工智能训练师三级 · 理论知识与操作技能</p>
+    </header>
+
+    <UiCard v-if="resume" class="resume" aria-labelledby="resume-title">
       <div>
-        <p class="kicker">操作技能 · 人工智能训练师三级</p>
-        <h1>先把一套题做完。</h1>
-        <p class="lede">40 道原题可以逐题练习。模拟考试按考核方案抽 6 题，满分 100，限时 120 分钟。交卷后，用管理员配置的模型阅卷。按题整理的笔记在学习资料里。</p>
-        <div class="actions">
-          <button class="btn" :disabled="busy || !questions.length" @click="start('practice')">开始全题练习</button>
-          <button class="btn seal" :disabled="busy || !questions.length" @click="start('exam')">开始模拟考试</button>
-          <router-link class="btn ghost" to="/materials">看学习资料</router-link>
-        </div>
-        <p v-if="error" class="error">{{ error }}</p>
-        <p v-else-if="!questions.length" class="muted">正在从数据库读取题库。</p>
-        <p v-else class="muted">题库 {{ questions.length }} 题 · {{ groups.length }} 个模块</p>
+        <StatusTag tone="blue">进行中</StatusTag>
+        <h2 id="resume-title">{{ examName(resume.mode) }}</h2>
+        <p class="small muted">继续上次的答卷</p>
       </div>
-      <aside class="slip" aria-label="模拟考试组卷">
-        <h2>模拟考试</h2>
-        <p>六个模块各抽一题，合卷 120 分钟。</p>
-        <table>
-          <tbody>
-            <tr v-for="rule in rules" :key="rule.label">
-              <td>{{ rule.label }}<br /><small class="muted">{{ rule.note }}</small></td>
-              <td>{{ rule.points }} 分</td>
-            </tr>
-            <tr class="total"><td>合计</td><td>100 分</td></tr>
-          </tbody>
-        </table>
-      </aside>
-    </section>
+      <dl class="resume-meta nums">
+        <div><dt>已答</dt><dd>{{ answered }} / {{ resume.questionIds.length }}</dd></div>
+        <div v-if="remaining !== undefined"><dt>剩余时间</dt><dd>{{ remaining }}</dd></div>
+      </dl>
+      <UiButton :to="examLocation(resume)">继续作答</UiButton>
+    </UiCard>
+    <LoadingBlock v-else-if="auth.user && !papersReady" label="正在查找进行中的答卷…" />
 
-    <section class="hero">
-      <div>
-        <p class="kicker">理论知识 · 闭卷机考</p>
-        <h1>190 题，90 分钟。</h1>
-        <p class="lede">题库有判断、单选、多选各 300 题。模拟考试按认定题量抽题，满分 100。练习可以做完全部题库，做完一题就能核对。多选要选对全部选项才得分。</p>
+    <p v-if="startError" class="error start-error" role="alert">{{ startError }}</p>
+    <div class="subjects" aria-label="考试入口">
+      <UiCard v-for="subject in subjects" :key="subject.key" class="subject">
+        <header class="subject-head">
+          <h2>{{ subject.label }}</h2><p class="muted small nums">练习题库 {{ subject.bank }} 题</p>
+        </header>
+        <dl class="facts nums">
+          <div><dt>模拟题量</dt><dd>{{ subject.count }} <span>题</span></dd></div>
+          <div><dt>限时</dt><dd>{{ subject.minutes }} <span>分钟</span></dd></div>
+          <div><dt>满分</dt><dd>100 <span>分</span></dd></div>
+        </dl>
         <div class="actions">
-          <button class="btn" :disabled="busy || theoryQuestions.length < 900" @click="startTheory('theory-practice')">开始理论练习</button>
-          <button class="btn seal" :disabled="busy || theoryQuestions.length < 900" @click="startTheory('theory')">开始理论模拟考试</button>
+          <UiButton :variant="resume ? 'entry' : 'primary'" :disabled="busy || (Boolean(auth.user) && !subject.ready)" @click="chooseMode(subject.exam)">开始模拟考试</UiButton>
+          <UiButton variant="ghost" :disabled="busy || (Boolean(auth.user) && !subject.ready)" @click="chooseMode(subject.practice)">开始练习</UiButton>
         </div>
-        <p v-if="!theoryQuestions.length" class="muted">正在从数据库读取理论题库。</p>
-        <p v-else class="muted">理论题库 {{ theoryQuestions.length }} 题</p>
-      </div>
-      <aside class="slip" aria-label="理论考核方案">
-        <h2>考核方案 · 理论</h2>
-        <p>闭卷机考，时长 90 分钟。</p>
-        <table>
-          <tbody>
-            <tr><td>判断题<br /><small class="muted">40 题，每题 0.5 分</small></td><td>20 分</td></tr>
-            <tr><td>单选题<br /><small class="muted">140 题，每题 0.5 分</small></td><td>70 分</td></tr>
-            <tr><td>多选题<br /><small class="muted">10 题，每题 1 分</small></td><td>10 分</td></tr>
-            <tr class="total"><td>合计 190 题</td><td>100 分</td></tr>
-          </tbody>
-        </table>
-      </aside>
+        <div v-if="errors[subject.key]" class="small error" role="alert">{{ errors[subject.key] }} <UiButton variant="text" compact @click="loadBank(subject.key)">重试加载</UiButton></div>
+        <p v-else-if="!subject.ready" class="small muted" role="status">正在加载题库…</p>
+        <details class="rules">
+          <summary>查看考核方案</summary>
+          <div class="rule-table">
+            <table><tbody>
+              <tr v-for="rule in subject.rules" :key="rule.label">
+                <td>{{ rule.label }}<br /><small class="muted">{{ rule.note }}</small></td>
+                <td class="nums">{{ rule.points }} 分</td>
+              </tr>
+            </tbody></table>
+          </div>
+        </details>
+      </UiCard>
+    </div>
+
+    <section class="recent">
+      <header class="section-title"><h2>最近成绩</h2><router-link v-if="auth.user" to="/account">查看全部答卷</router-link></header>
+      <EmptyState v-if="!auth.user" title="登录后查看答卷和成绩"><UiButton to="/account" variant="ghost">登录</UiButton></EmptyState>
+      <LoadingBlock v-else-if="!papersReady" label="正在加载答卷…" />
+      <EmptyState v-else-if="paperError" error title="答卷未能加载" :detail="paperError"><UiButton variant="ghost" @click="loadPapers">重试</UiButton></EmptyState>
+      <ExamRecordList v-else-if="recent.length" :records="recent" />
+      <EmptyState v-else title="暂无已交卷的成绩" detail="交卷后可在这里查看记录。" />
     </section>
 
-    <section class="steps" aria-label="作答流程">
-      <article class="step"><span>01</span><strong>组卷</strong><p>练习用全部 40 题。考试按模块抽 6 题，分值固定。</p></article>
-      <article class="step"><span>02</span><strong>作答</strong><p>文字答案记在账号里。上传的文件留在这台浏览器。</p></article>
-      <article class="step"><span>03</span><strong>阅卷</strong><p>交卷后提交文字和最多 6 张图片，模型给出每题分数和理由。</p></article>
-    </section>
-
-    <div class="section-title">
-      <h2>账号里的答卷</h2>
-      <router-link v-if="!auth.user" to="/account">登录后查看</router-link>
-    </div>
-    <div v-if="auth.user && papers.length" class="papers">
-      <button v-for="exam in papers" :key="exam.id" class="paper-row" @click="openPaper(exam)">
-        <strong>{{ paperName(exam.mode) }}</strong>
-        <span>{{ exam.status === 'submitted' ? '已交卷' : '进行中' }} · {{ exam.questionIds.length }} 题<span v-if="exam.assessment"> · {{ exam.mode === 'theory' || exam.mode === 'theory-practice' ? '得分' : 'AI' }} {{ exam.assessment.total }}/{{ exam.assessment.maxTotal }}</span></span>
-        <small>{{ when(exam.updatedAt) }}</small>
-      </button>
-    </div>
-    <p v-else-if="auth.user && papersReady" class="muted">还没有答卷。从上面开始一套。</p>
+    <ConfirmDialog
+      :open="Boolean(pending)" :title="pending ? examName(pending) : '开始作答'" cancel-label="取消" confirm-variant="primary"
+      :confirm-label="pending && subjects.some((item) => item.ready && (item.exam === pending || item.practice === pending)) ? '开始作答' : undefined"
+      @close="pending = undefined" @confirm="start"
+    >
+      <p v-if="pending === 'exam'">共 6 题，满分 100 分。点击开始作答后计时 120 分钟。</p>
+      <p v-else-if="pending === 'theory'">共 190 题，满分 100 分。点击开始作答后计时 90 分钟。</p>
+      <p v-else-if="pending">练习 {{ pending === 'practice' ? 40 : 900 }} 题，作答不限时。</p>
+      <p v-if="pending && !subjects.some((item) => item.ready && (item.exam === pending || item.practice === pending))" class="muted">题库尚未就绪，请稍候。</p>
+    </ConfirmDialog>
   </main>
 </template>
+
+<style scoped>
+.resume { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--sp-6); border-inline-start: 4px solid var(--blue); }
+.resume h2 { font-size: var(--fs-xl); margin: var(--sp-1) 0 var(--sp-2); }
+.resume-meta { display: flex; gap: var(--sp-5); }
+.resume-meta dt, .facts dt { color: var(--muted); font-size: var(--fs-xs); }
+.resume-meta dd, .facts dd { font-size: var(--fs-xl); font-weight: 700; }
+.subjects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); margin-top: var(--sp-4); }
+.subject-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: var(--sp-4); padding-block: var(--sp-3); border-block: 1px solid var(--line); }
+.facts div + div { border-inline-start: 1px solid var(--line); padding-inline-start: var(--sp-4); }
+.facts dd { white-space: nowrap; }
+.facts dd span { font-size: var(--fs-sm); font-weight: 400; }
+.rules { margin-top: var(--sp-3); }
+.rules summary { width: fit-content; padding-block: var(--sp-1); color: var(--blue); font-size: var(--fs-sm); }
+.rules td:last-child { text-align: right; white-space: nowrap; }
+.recent { margin-top: var(--sp-6); }
+.start-error { margin-block: var(--sp-3); }
+@media (max-width: 980px) { .subjects { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .resume { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-2); padding-block: var(--sp-3); }
+  .resume > div:first-child { grid-column: 1 / -1; }
+  .resume-meta { gap: var(--sp-3); }
+  .subject { padding-block: var(--sp-3); }
+  .facts { margin-block: var(--sp-3); padding-block: var(--sp-2); }
+  .facts div + div { padding-inline-start: var(--sp-2); }
+  .rules { margin-top: var(--sp-2); }
+}
+</style>

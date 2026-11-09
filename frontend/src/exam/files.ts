@@ -34,7 +34,7 @@ export async function saveAnswerFile(file: StoredFile) {
   db.close();
 }
 
-export async function filesFor(sessionId: string, questionId: string, fieldId: string): Promise<StoredFile[]> {
+export async function filesFor(sessionId: string, questionId?: string, fieldId?: string): Promise<StoredFile[]> {
   const db = await openDb();
   const all = await new Promise<StoredFile[]>((resolve, reject) => {
     const tx = db.transaction('answerFiles', 'readonly');
@@ -43,7 +43,9 @@ export async function filesFor(sessionId: string, questionId: string, fieldId: s
     request.onerror = () => reject(request.error);
   });
   db.close();
-  return all.filter((file) => file.sessionId === sessionId && file.questionId === questionId && file.fieldId === fieldId);
+  return all.filter((file) => file.sessionId === sessionId
+    && (questionId === undefined || file.questionId === questionId)
+    && (fieldId === undefined || file.fieldId === fieldId));
 }
 
 export async function removeAnswerFile(id: string) {
