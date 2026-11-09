@@ -13,4 +13,4 @@ Vue (frontend) -- /api --> Spring Boot (backend) -- JPA --> MySQL aigraph
 
 上传文件留在浏览器的 IndexedDB `aigraph-practical-exams`。下载素材从 `/exam-assets` 读取，文件在仓库根目录的 `exam-assets/`，不进 git。
 
-`docker-compose.yml` 提供一套独立的本机 MySQL，端口 3306。当前 `.env` 指向的是服务器上的库，端口 11306。两套库不要混用。
+数据库就是 `.env` 里的远程 MySQL，当前在服务器的 11306 端口。仓库不再另起一套本机库。

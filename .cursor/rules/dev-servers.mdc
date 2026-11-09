@@ -1,24 +1,24 @@
 ---
-description: 前端用终端管理，后端用 IDEA 调试器启动和排查
+description: 前端用终端管理，后端用 /ij-debugger 启动和排查
 alwaysApply: true
 ---
 
 # 本地前后端怎么启动
 
-页面在 `http://127.0.0.1:5173/`，接口在 `127.0.0.1:8080`。Vite 把 `/api` 代理到后端。
+页面在 `http://127.0.0.1:5173/`，接口在 `127.0.0.1:8080`。Vite 把 `/api` 代理到后端。数据库用 `.env` 里的远程 MySQL。
 
 ## 前端
 
-在终端里启动、重启和看日志。仓库根目录执行 `npm run dev`。报错读该终端的输出，不要另开一套前端。
+在终端里启动、重启和看日志。仓库根目录执行 `npm --prefix frontend run dev`。报错读该终端的输出，不要另开一套前端。
 
 端口已被占用时，先停掉占用 `5173` 的旧进程，再启动。
 
 ## 后端
 
-用 IDEA 调试器启动、重启和排查，运行配置名是 `AigraphApplication`。调用前先看当前调试会话；已有相关会话就沿用，重启时先停掉该会话再启动。
+通过 `/ij-debugger` 启动、重启和排查。运行配置名从 IDEA 的配置列表里取，当前是 `AigraphApplication`。调用前先看当前调试会话；已有相关会话就沿用，重启时先停掉该会话再启动。
 
-不要用 `npm run dev:api` 或 `mvn spring-boot:run` 起后端。IDEA 工具需要项目路径 `/Users/wanghuan/Documents/wanghuanlab/aigraph.wanghuanlab.com`。
+不要在终端执行 `mvn spring-boot:run`。IDEA 工具需要项目路径 `/Users/wanghuan/Documents/wanghuanlab/aigraph.wanghuanlab.com`。
 
 排查运行时问题时用非暂停的 logpoint，从调试事件里读结果。不要为了看值往源码里加临时打印。
 
-`8080` 被非本次 IDEA 会话占用时，先停掉那个进程，再从 IDEA 启动。
+`8080` 被非本次 IDEA 会话占用时，先停掉那个进程，再从 `/ij-debugger` 启动。

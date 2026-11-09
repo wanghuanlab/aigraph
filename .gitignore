@@ -92,5 +92,5 @@ output/playwright/
 test-results/
 playwright-report/
 
-# Local account database. Created on first login; not part of the public source.
+# Leftover local account files from the old JSON store.
 data/

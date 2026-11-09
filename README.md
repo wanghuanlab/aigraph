@@ -16,22 +16,17 @@ tests/        跨模块测试
 
 ## 本地运行
 
-```bash
-npm run dev:api
-npm run dev
-```
+数据库用根目录 `.env` 的 `MYSQL_*`，指向已有的远程 MySQL。样例见 `.env.example`。空题库会在后端启动时分别从 `database/seed/practical/questions.json` 和 `database/seed/theory/questions.json` 导入。
 
-接口在 `127.0.0.1:8080`，页面在 `http://127.0.0.1:5173/`。数据库连接写在根目录 `.env` 的 `MYSQL_*`，样例见 `.env.example`。
+后端在 IntelliJ IDEA 中运行 `AigraphApplication`，接口在 `127.0.0.1:8080`。
 
-`docker compose up` 会在本机 3306 端口另起一套空库，并执行 `database/schema.sql`。它不使用 `.env` 里的远程地址。空题库会在后端启动时分别从 `database/seed/practical/questions.json` 和 `database/seed/theory/questions.json` 导入。
-
-前端构建：
+前端：
 
 ```bash
-npm run build
+npm --prefix frontend run dev
 ```
 
-产物在 `frontend/dist/`。
+页面在 `http://127.0.0.1:5173/`。构建用 `npm --prefix frontend run build`，产物在 `frontend/dist/`。
 
 ## 账号
 
