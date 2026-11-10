@@ -167,7 +167,7 @@ async function start() {
 <template>
   <main class="page">
     <header class="page-title">
-      <h1>考场工作台</h1>
+      <h1>练习工作台</h1>
       <p>人工智能训练师三级 · 理论知识与操作技能</p>
     </header>
 
@@ -198,7 +198,7 @@ async function start() {
         </dl>
         <div class="actions">
           <UiButton :variant="resume ? 'entry' : 'primary'" :disabled="busy || (Boolean(auth.user) && !subject.ready)" @click="chooseMode(subject.exam)">开始模拟考试</UiButton>
-          <UiButton variant="ghost" :disabled="busy || (Boolean(auth.user) && !subject.ready)" @click="chooseMode(subject.practice)">开始练习</UiButton>
+          <UiButton variant="ghost" :disabled="busy || (Boolean(auth.user) && !subject.ready)" @click="chooseMode(subject.practice)">{{ subject.key === 'theory' ? '开始练习(全部)' : '开始练习' }}</UiButton>
         </div>
         <div v-if="errors[subject.key]" class="small error" role="alert">{{ errors[subject.key] }} <UiButton variant="text" compact @click="loadBank(subject.key)">重试加载</UiButton></div>
         <p v-else-if="!subject.ready" class="small muted" role="status">正在加载题库…</p>

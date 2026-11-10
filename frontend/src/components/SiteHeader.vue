@@ -40,10 +40,10 @@ async function logout() {
     <div class="top-inner">
       <router-link class="brand" to="/">
         <span class="brand-mark" aria-hidden="true">考</span>
-        <span><small>人工智能训练师</small><strong>三级考场</strong></span>
+        <span><small>人工智能训练师</small><strong>三级考试练习</strong></span>
       </router-link>
       <nav aria-label="主导航">
-        <router-link to="/" exact-active-class="nav-current">考场</router-link>
+        <router-link to="/" exact-active-class="nav-current">练习</router-link>
         <router-link to="/materials" exact-active-class="nav-current">学习资料</router-link>
         <router-link v-if="auth.user?.role === 'admin'" to="/admin" exact-active-class="nav-current">后台</router-link>
         <details v-if="auth.user" ref="menu" class="account-menu" @focusout="onFocusOut" @keydown.esc.stop="onEscape">
